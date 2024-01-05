@@ -1,0 +1,54 @@
+[
+	{
+		"name": "adventure-travel-128404.mp3",
+		"tempo": 105,
+		"duration": 125.753468
+	},
+	{
+		"name": "europe-travel-119948.mp3",
+		"tempo": 113,
+		"duration": 60.238343
+	},
+	{
+		"name": "good-vibes-127577.mp3",
+		"tempo": 123,
+		"duration": 129.306093
+	},
+	{
+		"name": "in-the-forest-ambient-acoustic-guitar-instrumental-background-music-for-videos-5718.mp3",
+		"tempo": 100,
+		"duration": 119.112
+	},
+	{
+		"name": "in-the-forest-ambient-acoustic-guitar-instrumental-background-music-ig-version-60s-9646.mp3",
+		"tempo": 102,
+		"duration": 60.238343
+	},
+	{
+		"name": "travel-to-the-city-8752.mp3",
+		"tempo": 95,
+		"duration": 169.351812
+	},
+	{
+		"name": "travel-vlog-110040.mp3",
+		"tempo": 110,
+		"duration": 146.259593
+	},
+	{
+		"name": "vlog-groovy-hip-hop-18304.mp3",
+		"tempo": 174,
+		"duration": 142.106093
+	},
+	{
+		"name": "tension-112135.mp3",
+		"tempo": 100,
+		"duration": 117.054687,
+        "manual": true
+	},
+	{
+		"name": "indian-trap-132594.mp3",
+		"tempo": 166,
+		"duration": 90.044062,
+        "manual": true
+	}
+]

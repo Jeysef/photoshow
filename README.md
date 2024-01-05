@@ -12,6 +12,7 @@ If you are not familiar with the different technologies used in this project, pl
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+- [FFmpeg](https://ffmpeg.org/)
 
 ## Learn More
 
@@ -25,3 +26,8 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+## Shadcn components
+`alert aspect-ratio avatar button card collapsible dialog dropdown-menu form input label progress radio-group scroll-area sheet skeleton`
+
+[instalation](https://ui.shadcn.com/docs/cli#options-1)

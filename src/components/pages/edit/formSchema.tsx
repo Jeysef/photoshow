@@ -1,0 +1,23 @@
+import { OutputResolution } from "@/core/schemas/enums";
+import { OrientationType } from "@/types/types";
+import z from "zod";
+
+enum FormFieldNames {
+    SOUNDTRACK = "soundtrack",
+    RESOLUTION = "resolution",
+    ORIENTATION = "orientation",
+    FILES = "file",
+    TITLE = "title",
+}
+
+const formSchema = z.object({
+    [FormFieldNames.SOUNDTRACK]: z.optional(z.string()),
+    [FormFieldNames.RESOLUTION]: z.optional(z.nativeEnum(OutputResolution)),
+    [FormFieldNames.ORIENTATION]: z.optional(z.nativeEnum(OrientationType)),
+    [FormFieldNames.FILES]: z.number(),
+    [FormFieldNames.TITLE]: z.optional(z.string()),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+export { FormFieldNames, formSchema, type FormValues };

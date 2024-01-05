@@ -1,0 +1,3 @@
+.scrollArea {
+    height: min(24rem, 80vh - 10rem);
+}
