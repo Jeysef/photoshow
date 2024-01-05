@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { CreatePost } from "@/app/_components/create-post";
 import { api } from "@/trpc/server";
+import { SignIn } from "@clerk/nextjs";
 
 export default async function Home() {
   const hello = await api.post.hello.query({ text: "from tRPC" });
@@ -43,6 +44,9 @@ export default async function Home() {
         </div>
 
         <CrudShowcase />
+        <Link href="/sign-in/">
+          <span className="text-2xl font-bold underline">Sign in</span>
+        </Link>
       </div>
     </main>
   );
