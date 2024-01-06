@@ -22,7 +22,7 @@ export default function ButtonsComponent(props: IButtonsComponentProps) {
     return (
         <div className="flex flex-nowrap gap-4">
             <Options className="w-1/4" disabled={disableSubmit} onSubmit={clickSubmitButton} form={form} aria-disabled={disableSubmit} />
-            <Button ref={submitButtonRef} type="submit" variant={"teal"} className="w-3/4" disabled={disableSubmit} aria-disabled={disableSubmit}>
+            <Button ref={submitButtonRef} type="submit" variant={"default"} className="w-3/4" disabled={disableSubmit} aria-disabled={disableSubmit}>
                 Generate
             </Button>
         </div>

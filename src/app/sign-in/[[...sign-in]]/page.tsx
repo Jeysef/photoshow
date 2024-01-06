@@ -1,15 +1,11 @@
 import Center from "@/components/center";
 import { SignIn } from "@clerk/nextjs";
-import Waves from "./waves.svg";
+import styles from "./page.module.css";
 
 export default function Page() {
-    console.log(Waves);
     return (
-        <Center>
-            <Waves className="col-span-full row-span-full" />
-            <Center className="col-span-full row-span-full">
-                <SignIn />
-            </Center>
+        <Center className={styles.wave}>
+            <SignIn />
         </Center>
     );
 }

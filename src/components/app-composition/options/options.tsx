@@ -39,7 +39,7 @@ export const Options: FC<Omit<ButtonProps, keyof IOptionsProps> & IOptionsProps>
                 </ScrollArea>
                 <DialogFooter>
                     <DialogTrigger asChild>
-                        <Button type="submit" onClick={onSubmit} variant={"teal"} className="sm:w-3/4" disabled={props.disabled}>
+                        <Button type="submit" onClick={onSubmit} variant={"default"} className="sm:w-3/4" disabled={props.disabled}>
                             Generate
                         </Button>
                     </DialogTrigger>

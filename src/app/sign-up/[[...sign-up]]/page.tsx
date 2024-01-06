@@ -1,11 +1,11 @@
 import Center from "@/components/center";
-import { SignIn } from "@clerk/nextjs";
+import { SignUp } from "@clerk/nextjs";
+import styles from "./page.module.css";
 
 export default function Page() {
     return (
-        <Center>
-            <Image src="/logo.svg" alt="Logo" width={200} height={200} />
-            <SignIn />
+        <Center className={styles.wave}>
+            <SignUp />
         </Center>
     );
 }
