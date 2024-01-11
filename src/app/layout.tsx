@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }}
         >
             <html lang="en">
-                <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+                <body className={cn("min-h-dvh bg-background font-sans antialiased", fontSans.variable)}>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         <TRPCReactProvider cookies={cookies().toString()}>{children}</TRPCReactProvider>
                     </ThemeProvider>

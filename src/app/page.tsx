@@ -14,10 +14,10 @@ import Link from "next/link";
 export default async function Home() {
     return (
         <div className="relative h-full w-full">
-            <div className="absolute inset-0">
+            <div className="absolute inset-x-0 top-0">
                 <SiteHeader />
             </div>
-            <div className="max-w-container container relative h-full">
+            <div className="container relative h-full max-w-container">
                 <div className="flex h-full flex-col items-center justify-center">
                     <div className="text-center md:text-left">
                         <Heading variant={"h1"}>{siteConfig.name}</Heading>
