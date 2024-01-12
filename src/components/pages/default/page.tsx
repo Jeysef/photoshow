@@ -23,9 +23,7 @@ export default async function Home() {
                         <Heading variant={"h1"}>{siteConfig.name}</Heading>
                         <Text className="leading-7 [&:not(:first-child)]:mt-6">{siteConfig.description}</Text>
                         <br />
-                        <br />
-                        <br />
-                        <Link className={buttonVariants()} href="/edit">
+                        <Link className={buttonVariants({ className: "mt-8" })} href="/edit">
                             Start editing
                         </Link>
                     </div>
