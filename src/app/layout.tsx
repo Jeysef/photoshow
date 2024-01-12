@@ -9,7 +9,6 @@ import { biennale as fontSans } from "../components/fonts/fonts";
 import { ThemeProvider } from "../components/theme-provider";
 import { siteConfig } from "../config/site";
 import { cn } from "../lib/utils";
-import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
     metadataBase: new URL(siteConfig.url),
