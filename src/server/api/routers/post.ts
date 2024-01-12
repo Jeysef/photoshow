@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "@/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
-    create: publicProcedure.input(z.object({ name: z.string().min(1) })).mutation(async ({ ctx }) => {
-        return ctx.db.post.create({
+    create: privateProcedure.input(z.object({ videoId: z.string().min(1) })).mutation(async ({ ctx, input }) => {
+        return await ctx.db.post.create({
             data: {
-                authorId: "sdsds",
-                videoId: "sdsds",
+                authorId: ctx.currentUserId,
+                videoId: input.videoId,
             },
         });
     }),
