@@ -23,8 +23,6 @@ function InputCardContent(props: IInputCardContentProps) {
     const [disabled, setDisabled] = useState(false);
     const config = useRef<IConfig>({});
     const wrapperId = useId();
-    const portalId = useId();
-    // const [isButtonVisible, setIsButtonVisible] = useState(false);
     const [containerElement, setContainerElement] = useState<HTMLElement | null>(null);
 
     const ImageUploadDropzone = useMemo(() => {
@@ -39,12 +37,7 @@ function InputCardContent(props: IInputCardContentProps) {
                     container: cn("grid justify-items-center grid-cols-2 gap-x-4", styles.container),
                 }}
                 content={{
-                    uploadIcon: (
-                        <>
-                            <UploadCloud width={48} height={48} className="col-span-2 hover:opacity-90" />
-                            <div id={portalId}></div>
-                        </>
-                    ),
+                    uploadIcon: <UploadCloud width={48} height={48} className="col-span-2" />,
                 }}
                 onUploadError={(error: Error) => {
                     // Do something with the error.
@@ -74,19 +67,11 @@ function InputCardContent(props: IInputCardContentProps) {
         const targetNode = document.getElementById(wrapperId); // Replace with the actual ID of your component root
         const config = { childList: true, subtree: true };
 
-        const callback: MutationCallback = function (mutationsList, observer) {
+        const callback: MutationCallback = function (mutationsList) {
             for (const mutation of mutationsList) {
                 if (mutation.type === "childList") {
                     mutation.addedNodes.forEach((node) => {
                         if (node.nodeType === 1 && (node as Element).matches && (node as Element).matches('[data-ut-element="button"]')) {
-                            // The added node is an element with the specified data attribute
-                            console.log('Element with data-ut-element="button" added:', node);
-
-                            // const newDiv = document.createElement("div");
-                            // newDiv.id = buttonWrapperId;
-                            // newDiv.className = "mt-4 col-span-1 justify-self-end";
-
-                            // Wrap the button with the new div
                             if (node.parentElement) {
                                 setContainerElement(node.parentElement);
                             }
@@ -94,10 +79,6 @@ function InputCardContent(props: IInputCardContentProps) {
                     });
                     mutation.removedNodes.forEach((node) => {
                         if (node.nodeType === 1 && (node as Element).matches && (node as Element).matches('[data-ut-element="button"]')) {
-                            // The removed node is an element with the specified data attribute
-                            console.log('Element with data-ut-element="button" removed:', node);
-
-                            // Unwrap the button from the div
                             setContainerElement(null);
                         }
                     });
@@ -114,7 +95,6 @@ function InputCardContent(props: IInputCardContentProps) {
         return () => observer.disconnect();
     }, []);
 
-    // const buttonElement = document.querySelector(`[data-ut-element="button"]`);
     return (
         <Card>
             <CardHeader className="space-y-1">
@@ -131,7 +111,7 @@ function InputCardContent(props: IInputCardContentProps) {
                                     className="order-9 mt-4 w-1/4 justify-self-end"
                                     disabled={disabled}
                                     onSubmit={() => {
-                                        undefined;
+                                        containerElement.querySelector<HTMLButtonElement>('[data-ut-element="button"]')?.click();
                                     }}
                                     form={form}
                                     aria-disabled={disabled}
