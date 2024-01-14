@@ -6,7 +6,7 @@ import { Error } from "../../app-composition/cards/error-card/error-card";
 import InputCard from "../../app-composition/cards/input-card/input-card";
 import Loading from "../../app-composition/cards/loading-card/loading-card";
 import Video from "../../app-composition/cards/video-card/video-card";
-import { type IContext, LoadingState } from "./types";
+import { LoadingState, type IContext } from "./types";
 
 function CardContainer({ children }: { children: JSX.Element }) {
     return (

@@ -1,10 +1,13 @@
+import { uploadRouter } from "@/server/uploadthing";
 import "@/components/styles/globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark as clerkDarkTheme } from "@clerk/themes";
+import { NextSSRPlugin as UTNextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import "modern-normalize/modern-normalize.css";
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
+import { extractRouterConfig } from "uploadthing/server";
 import { biennale as fontSans } from "../components/fonts/fonts";
 import { ThemeProvider } from "../components/theme-provider";
 import { siteConfig } from "../config/site";
@@ -61,6 +64,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <html lang="en">
                 <body className={cn("min-h-dvh bg-background font-sans antialiased", fontSans.variable)}>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                        <UTNextSSRPlugin
+                            /**
+                             * The `extractRouterConfig` will extract **only** the route configs
+                             * from the router to prevent additional information from being
+                             * leaked to the client. The data passed to the client is the same
+                             * as if you were to fetch `/api/uploadthing` directly.
+                             */
+                            routerConfig={extractRouterConfig(uploadRouter)}
+                        />
                         <TRPCReactProvider cookies={cookies().toString()}>{children}</TRPCReactProvider>
                     </ThemeProvider>
                 </body>

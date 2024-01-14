@@ -1,0 +1,3 @@
+.container {
+    grid-template-columns: calc(63.5 / 144 * 100%) calc((1 - (63.5 / 144)) * 100%);
+}

@@ -14,7 +14,6 @@ const formSchema = z.object({
     [FormFieldNames.SOUNDTRACK]: z.optional(z.string()),
     [FormFieldNames.RESOLUTION]: z.optional(z.nativeEnum(OutputResolution)),
     [FormFieldNames.ORIENTATION]: z.optional(z.nativeEnum(OrientationType)),
-    [FormFieldNames.FILES]: z.number(),
     [FormFieldNames.TITLE]: z.optional(z.string()),
 });
 

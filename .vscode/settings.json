@@ -1,0 +1,28 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.participants.timeout": 30000,
+  "files.enableTrash": false,
+  "cSpell.words": [
+    "biennale",
+    "hookform",
+    "Jeysef",
+    "Michalík",
+    "nextjs",
+    "photoshow",
+    "superjson",
+    "TRPC",
+    "typesafety",
+    "uploadthing",
+    "usequerystate",
+    "utapi"
+  ],
+  "npm.scriptExplorerAction": "run",
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.organizeImports": "always"
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.parameterTypes.enabled": true
+}

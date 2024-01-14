@@ -7,12 +7,11 @@
  * need to use are documented accordingly near the end.
  */
 import { TRPCError, initTRPC } from "@trpc/server";
-import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@/server/db";
-import { getAuth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 /**
  * 1. CONTEXT
@@ -26,11 +25,8 @@ import { getAuth } from "@clerk/nextjs/server";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-    const { req } = opts;
-    const session = getAuth(req);
-
-    const userId = session.userId;
+export const createTRPCContext = async (opts: { headers: Headers }) => {
+    const userId = (await currentUser())?.id;
 
     return {
         db,

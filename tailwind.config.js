@@ -1,7 +1,9 @@
+// @ts-check
 import { fontFamily } from "tailwindcss/defaultTheme";
+import { withUt } from "uploadthing/tw";
 
 /** @type {import('tailwindcss').Config} */
-export default {
+export default withUt({
     darkMode: ["class"],
     content: ["src/app/**/*.{ts,tsx}", "src/components/**/*.{ts,tsx}"],
     theme: {
@@ -38,6 +40,9 @@ export default {
                 accent: {
                     DEFAULT: "hsl(var(--accent))",
                     foreground: "hsl(var(--accent-foreground))",
+                },
+                brand: {
+                    DEFAULT: "hsl(var(--brand))",
                 },
                 popover: {
                     DEFAULT: "hsl(var(--popover))",
@@ -76,4 +81,4 @@ export default {
         },
     },
     plugins: [require("tailwindcss-animate")],
-};
+});
