@@ -15,6 +15,7 @@ const formSchema = z.object({
     [FormFieldNames.RESOLUTION]: z.optional(z.nativeEnum(OutputResolution)),
     [FormFieldNames.ORIENTATION]: z.optional(z.nativeEnum(OrientationType)),
     [FormFieldNames.TITLE]: z.optional(z.string()),
+    [FormFieldNames.FILES]: z.optional(z.string()),
 });
 
 type FormValues = z.infer<typeof formSchema>;

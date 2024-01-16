@@ -1,10 +1,10 @@
 import { FormFieldNames } from "@/components/pages/edit/formSchema";
+import { DIRS_PATH } from "@/constants";
 import * as fs from "fs";
 import path from "path";
 import { type ISubmitProps, type VideoId } from "../../types/types";
 import { LoggerEmoji, LoggerState } from "./enums";
 import Logger from "./logger";
-import { DIRS_PATH } from "@/constants";
 
 export default async function imagesLoader(props: ISubmitProps & { destination: string }): Promise<{ imagePaths: string[] }> {
     const { formData, destination } = props;
@@ -22,13 +22,15 @@ export default async function imagesLoader(props: ISubmitProps & { destination: 
 async function saveImages(formData: FormData, directory: string): Promise<{ images: string[] }> {
     const images: string[] = [];
 
-    for (const image of formData.getAll(FormFieldNames.FILES)) {
-        if (image === undefined || (image as File).name === "undefined") continue;
-        const imagePath = await saveImage(image as File, directory);
+    for (const img of formData.getAll(FormFieldNames.FILES)) {
+        console.log("🚀 ~ saveImages ~ img:", img);
+        const image = img as File | null;
+        if (!image || image.name === "undefined") continue;
+        const imagePath = await saveImage(image, directory);
         images.push(imagePath);
     }
 
-    return { images };
+        return { images };
 }
 
 async function saveImage(file: File, directory: string): Promise<string> {

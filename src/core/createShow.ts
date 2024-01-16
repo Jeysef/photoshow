@@ -1,8 +1,8 @@
 "use server";
+import { currentUser } from "@clerk/nextjs/server";
 import path from "path";
 import { DIRS_PATH } from "../constants";
-import { type IProcessInfo, type ISubmitProps, type ISubmitReturnProps, ProcessState, SubmitTripIdReturn, type VideoId } from "../types/types";
-import { generateVideoId } from "./auth";
+import { SubmitTripIdReturn, type IProcessInfo, type ISubmitProps, type ISubmitReturnProps, type VideoId } from "../types/types";
 import Controller from "./controller/controller";
 import { LoggerEmoji, LoggerState } from "./controller/enums";
 import imagesLoader from "./controller/fileLoader";
@@ -10,11 +10,21 @@ import Logger from "./controller/logger";
 import { createShow } from "./controller/runFFmpeg";
 
 export async function submit(props: ISubmitProps): Promise<ISubmitReturnProps> {
-    console.log("Submitted")
+    console.log("Submitted");
+
+    const userId = (await currentUser())?.id;
+    if (!userId) {
+        Logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, "Unauthorized");
+        return {
+            state: SubmitTripIdReturn.ERROR,
+            videoId: "",
+        };
+    }
+
     const { config } = props;
 
     // const userId = generateUserId();
-    const videoId = generateVideoId();
+    const videoId = userId + "/" + crypto.randomUUID();
 
     // error handling
     if (!DIRS_PATH) {
@@ -25,31 +35,20 @@ export async function submit(props: ISubmitProps): Promise<ISubmitReturnProps> {
         };
     }
 
-    // Logger.log(LoggerState.INFO, LoggerEmoji.START, `User ${userId} requested trip ${tripId}`);
-    const stateOfProcess = Controller.getStateOfProcess(videoId);
-    switch (stateOfProcess) {
-        case ProcessState.ERROR:
-        case ProcessState.NOT_FOUND:
-            Controller.startProcess(videoId);
-            Logger.log(LoggerState.INFO, LoggerEmoji.PROCESS, "Creating process");
-            const destination = path.resolve( process.cwd(), DIRS_PATH, videoId)
-            imagesLoader({...props, destination}).then(({ imagePaths }) => {
-                const path = { src: destination, name: "video" };
-                const { progress, duration } = createShow({ config, images: imagePaths, destination: path });
-                Controller.addVideo({ videoId, progress, duration });
-            }).catch((err) => {
-                Logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, err as string);
-            });
-            
-            return {state: SubmitTripIdReturn.RUNNING, videoId};
-        case ProcessState.LOADING_IMAGES:
-        case ProcessState.LOADING_VIDEO:
-            Logger.log(LoggerState.SUCCESS, LoggerEmoji.PROCESS, "Process already created");
-            return {state: SubmitTripIdReturn.RUNNING, videoId};
-        case ProcessState.SUCCESS:
-            Logger.log(LoggerState.INFO, LoggerEmoji.UPLOAD, "Proces already finished.");
-            return {state: SubmitTripIdReturn.FINISHED, videoId};
-    }
+    Controller.startProcess(videoId);
+    Logger.log(LoggerState.INFO, LoggerEmoji.PROCESS, "Creating process for user " + userId + " with videoId " + videoId);
+    const destination = path.resolve(process.cwd(), DIRS_PATH, videoId);
+    imagesLoader({ ...props, destination })
+        .then(({ imagePaths }) => {
+            const path = { src: destination, name: "video" };
+            const { progress, duration } = createShow({ config, images: imagePaths, destination: path });
+            Controller.addVideo({ videoId, progress, duration });
+        })
+        .catch((err) => {
+            Logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, err as string);
+        });
+
+    return { state: SubmitTripIdReturn.RUNNING, videoId };
 }
 
 export interface IGetProgressProps {
@@ -57,7 +56,7 @@ export interface IGetProgressProps {
 }
 
 export async function getProcessData(props: IGetProgressProps): Promise<false | IProcessInfo> {
-    const { videoId } = props; 
+    const { videoId } = props;
     const progress = Controller.getProgress(videoId);
     return progress;
 }

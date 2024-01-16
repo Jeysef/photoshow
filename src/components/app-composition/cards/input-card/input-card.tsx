@@ -12,6 +12,7 @@ export const defaultValues: FormValues = {
     [FormFieldNames.ORIENTATION]: OrientationType.LANDSCAPE,
     [FormFieldNames.RESOLUTION]: OutputResolution.FULL_HD,
     [FormFieldNames.SOUNDTRACK]: "automatic",
+    [FormFieldNames.FILES]: "",
 };
 
 function InputCard() {

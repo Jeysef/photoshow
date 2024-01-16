@@ -24,5 +24,7 @@
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "typescript.inlayHints.parameterNames.enabled": "all",
-  "typescript.inlayHints.parameterTypes.enabled": true
+  "typescript.inlayHints.parameterTypes.enabled": true,
+  "files.autoSave": "onFocusChange",
+  "turboConsoleLog.includeFileNameAndLineNum": true
 }
