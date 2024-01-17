@@ -1,7 +1,7 @@
 import { FFMpegProgress } from "ffmpeg-progress-wrapper";
 import * as fs from "fs";
 import path from "path";
-import { type IJsonGeneratorProps, JsonGenerator } from "../jsonGenerator/JsonGenerator";
+import { JsonGenerator, type IJsonGeneratorProps } from "../jsonGenerator/JsonGenerator";
 import ScriptGenerator from "../scriptGenerator/Timeline";
 import { LoggerEmoji, LoggerState } from "./enums";
 import Logger from "./logger";
@@ -10,7 +10,6 @@ export interface IShow {
     progress: FFMpegProgress;
     duration: number;
 }
-
 
 export function createShow(props: IJsonGeneratorProps): IShow {
     Logger.log(LoggerState.INFO, LoggerEmoji.WORK, "Creating show");
@@ -31,13 +30,12 @@ export function createShow(props: IJsonGeneratorProps): IShow {
         ffmpegPath = path.resolve(process.cwd(), "ffmpeg");
     }
 
-
     const progress = new FFMpegProgress(code, {
         cmd: ffmpegPath,
-        duration: scriptGenerator.returnDuration()
+        duration: scriptGenerator.returnDuration(),
     });
-    // progress.on("raw", (data) => {
-    //     console.log("progress raw: ", data);
-    // });
+    progress.on("raw", (data) => {
+        console.log("progress raw: ", data);
+    });
     return { progress, duration: scriptGenerator.returnDuration() };
 }

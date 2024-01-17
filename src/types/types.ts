@@ -59,10 +59,12 @@ export interface IConfig {
 export interface ISubmitProps {
     formData: FormData;
     config: IConfig;
+    userId: string;
 }
 
 export interface ISubmitReturnProps {
-    state: SubmitTripIdReturn,
-    videoId: VideoId,
+    state: SubmitTripIdReturn;
+    videoId: VideoId;
 }
 
+export type UserId = string;

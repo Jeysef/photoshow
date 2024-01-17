@@ -29,6 +29,18 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/types/*.d.ts", ".eslintrc.cjs", "next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.js", ".next/types/**/*.ts", "tailwind.config.ts"],
+  "include": [
+    "src/types/*.d.ts",
+    ".eslintrc.cjs",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/*.js",
+    ".next/types/**/*.ts",
+    "tailwind.config.ts",
+    "jest.config.mjs"
+  ],
   "exclude": ["node_modules"]
 }

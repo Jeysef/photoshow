@@ -1,5 +1,5 @@
 import { type FFMpegProgress, type IFFMpegProgressData } from "ffmpeg-progress-wrapper";
-import { type IProcessInfo, type IProcessMeta, type IStartProcessParams, ProcessState, type RangeIncl, type VideoId } from "../../types/types";
+import { ProcessState, type IProcessInfo, type IProcessMeta, type IStartProcessParams, type RangeIncl, type UserId, type VideoId } from "../../types/types";
 import { concealIncl } from "../utils/utils";
 import { LoggerEmoji, LoggerState } from "./enums";
 import { deleteVideoFolder } from "./fileLoader";
@@ -68,7 +68,8 @@ class Controller {
         });
     }
 
-    public startProcess(videoId: VideoId): boolean {
+    public startProcess(videoId: VideoId, userId: UserId): boolean {
+        Logger.log(LoggerState.INFO, LoggerEmoji.PROCESS, "Creating process for user " + userId + " with videoId " + videoId);
         if (this.processInfoList.has(videoId)) {
             this.processInfoList.get(videoId)!.info.state = ProcessState.LOADING_IMAGES;
             this.processInfoList.get(videoId)!.info.meta.videoProgress = 0;

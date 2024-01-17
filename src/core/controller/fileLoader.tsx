@@ -1,39 +1,42 @@
 import { FormFieldNames } from "@/components/pages/edit/formSchema";
-import { DIRS_PATH } from "@/constants";
 import * as fs from "fs";
 import path from "path";
-import { type ISubmitProps, type VideoId } from "../../types/types";
+import { type VideoId } from "../../types/types";
+import { getDestinationPath } from "../helpers";
 import { LoggerEmoji, LoggerState } from "./enums";
 import Logger from "./logger";
 
-export default async function imagesLoader(props: ISubmitProps & { destination: string }): Promise<{ imagePaths: string[] }> {
-    const { formData, destination } = props;
+export default async function saveImages(props: { formData: FormData; videoId: VideoId }): Promise<{ imagePaths: string[] }> {
+    const { formData, videoId } = props;
+    const destination = getDestinationPath(videoId);
 
     if (fs.existsSync(destination)) {
-        Logger.log(LoggerState.INFO, LoggerEmoji.ERROR, "Directory for trip already exists");
+        Logger.log(LoggerState.INFO, LoggerEmoji.ERROR, "Directory for trip already exists. Cleaning up...");
+        deleteVideoFolder(videoId);
     }
 
     Logger.log(LoggerState.INFO, LoggerEmoji.SUCCESS, "Creating directory for trip");
-    fs.mkdirSync(destination, { recursive: true });
-    const { images: imagePaths } = await saveImages(formData, destination);
+    createVideoFolder(videoId);
+    const { images: imagePaths } = await writeImages(getFilesFromFormData(formData), destination);
+    console.log("imagePaths", imagePaths);
     return { imagePaths };
 }
 
-async function saveImages(formData: FormData, directory: string): Promise<{ images: string[] }> {
-    const images: string[] = [];
-
-    for (const img of formData.getAll(FormFieldNames.FILES)) {
-        console.log("🚀 ~ saveImages ~ img:", img);
-        const image = img as File | null;
-        if (!image || image.name === "undefined") continue;
-        const imagePath = await saveImage(image, directory);
-        images.push(imagePath);
+function getFilesFromFormData(formData: FormData): File[] {
+    const files: File[] = [];
+    for (const value of formData.getAll(FormFieldNames.FILES)) {
+        files.push(value as File);
     }
-
-        return { images };
+    return files;
 }
 
-async function saveImage(file: File, directory: string): Promise<string> {
+async function writeImages(files: File[], directory: string): Promise<{ images: string[] }> {
+    const imagePaths = await Promise.all(files.map((file) => writeFile(file, directory)));
+
+    return { images: imagePaths };
+}
+
+async function writeFile(file: File, directory: string): Promise<string> {
     try {
         if (typeof directory !== "string") {
             throw new Error("Invalid directory");
@@ -42,7 +45,7 @@ async function saveImage(file: File, directory: string): Promise<string> {
         }
         const imagePath = path.join(directory, file.name);
 
-        fs.writeFileSync(imagePath, Buffer.from(await file.arrayBuffer()));
+        await fs.promises.writeFile(imagePath, Buffer.from(await file.arrayBuffer()));
 
         return imagePath;
     } catch (error) {
@@ -53,9 +56,9 @@ async function saveImage(file: File, directory: string): Promise<string> {
 
 export function deleteVideoFolder(videoId: VideoId) {
     console.log("Deleting video folder: ", videoId);
-    const destination = path.resolve(process.cwd(), DIRS_PATH, videoId);
+    const destination = getDestinationPath(videoId);
     if (fs.existsSync(destination)) {
-        fs.rm(destination, { recursive: true }, (err) => {
+        fs.rm(destination, {}, (err) => {
             if (err) {
                 console.error(err);
             } else {
@@ -67,7 +70,7 @@ export function deleteVideoFolder(videoId: VideoId) {
 
 export function deleteImagesFromFolder(videoId: VideoId) {
     console.log("Deleting images from folder: ", videoId);
-    const destination = path.resolve(process.cwd(), DIRS_PATH, videoId);
+    const destination = getDestinationPath(videoId);
     if (fs.existsSync(destination)) {
         fs.readdir(destination, (err, files) => {
             if (err) {
@@ -86,5 +89,12 @@ export function deleteImagesFromFolder(videoId: VideoId) {
                 }
             }
         });
+    }
+}
+
+function createVideoFolder(videoId: VideoId) {
+    const destination = getDestinationPath(videoId);
+    if (!fs.existsSync(destination)) {
+        fs.mkdirSync(destination, { recursive: true });
     }
 }

@@ -1,6 +1,6 @@
-import { IJsonGeneratorProps, JsonGenerator } from "@/src/core/jsonGenerator/JsonGenerator";
-import { OutputResolution } from "@/src/core/schemas/enums";
-import { OrientationType } from "@/src/types/types";
+import { JsonGenerator, type IJsonGeneratorProps } from "@/core/jsonGenerator/JsonGenerator";
+import { OutputResolution } from "@/core/schemas/enums";
+import { OrientationType } from "@/types/types";
 
 describe("JsonGenerator", () => {
     let props: IJsonGeneratorProps;
@@ -35,7 +35,7 @@ describe("JsonGenerator", () => {
 
     it("should create JSON with title", () => {
         const edit = JsonGenerator.createJson(props);
-        expect(edit.timeline.tracks[1].clips[0]).toBeDefined();
+        expect(edit.timeline.tracks[1]?.clips[0]).toBeDefined();
     });
 
     it("should be JSON serializable", () => {

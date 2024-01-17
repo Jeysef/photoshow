@@ -1,17 +1,31 @@
-import { FormFieldNames } from "@/components/pages/edit/formSchema";
+import { createPhotoshow } from "@/core/createShow";
+import { SubmitTripIdReturn } from "@/types/types";
+import { currentUser } from "@clerk/nextjs/server";
 import { type NextRequest } from "next/server";
+import z from "zod";
 
-export const POST = async (request: NextRequest) => {
-    const options = Object.fromEntries(request.nextUrl.searchParams.entries());
-    console.log("🚀 ~ file: route.ts:7 ~ POST ~ options:", options);
-    const formData = await request.formData();
-    const files = formData.getAll(FormFieldNames.FILES) as (File | null)[];
-    const file = files[0];
-    if (!file) {
-        return Response.json({ success: false });
+const routeResponse = z.object({
+    state: z.nativeEnum(SubmitTripIdReturn),
+    videoId: z.string(),
+});
+
+type RouteResponse = z.infer<typeof routeResponse>;
+
+export const POST = async (request: NextRequest): Promise<Response> => {
+    const userId = (await currentUser())?.id;
+    if (!userId) {
+        const data: RouteResponse = { state: SubmitTripIdReturn.ERROR, videoId: "" };
+        return parseData(data);
     }
-    console.log("File", file);
-    return Response.json({ success: true });
+    const config = Object.fromEntries(request.nextUrl.searchParams.entries());
+    const formData = await request.formData();
+    return parseData(await createPhotoshow({ config, formData, userId }));
 };
 
-export const runtime = "nodejs";
+function parseData(data: RouteResponse): Response {
+    const parseResult = routeResponse.safeParse(data);
+    if (!parseResult.success) {
+        return Response.error();
+    }
+    return Response.json(parseResult);
+}

@@ -1,51 +1,30 @@
-"use server";
-import { currentUser } from "@clerk/nextjs/server";
-import path from "path";
-import { DIRS_PATH } from "../constants";
 import { SubmitTripIdReturn, type IProcessInfo, type ISubmitProps, type ISubmitReturnProps, type VideoId } from "../types/types";
 import Controller from "./controller/controller";
 import { LoggerEmoji, LoggerState } from "./controller/enums";
-import imagesLoader from "./controller/fileLoader";
+import saveImages from "./controller/fileLoader";
 import Logger from "./controller/logger";
 import { createShow } from "./controller/runFFmpeg";
+import { getDestinationPath } from "./helpers";
 
-export async function submit(props: ISubmitProps): Promise<ISubmitReturnProps> {
+export async function createPhotoshow(props: ISubmitProps): Promise<ISubmitReturnProps> {
     console.log("Submitted");
+    const { formData, config, userId } = props;
+    console.log("🚀 ~ file: createShow.ts:12 ~ createPhotoshow ~ config:", config);
 
-    const userId = (await currentUser())?.id;
-    if (!userId) {
-        Logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, "Unauthorized");
-        return {
-            state: SubmitTripIdReturn.ERROR,
-            videoId: "",
-        };
-    }
-
-    const { config } = props;
-
-    // const userId = generateUserId();
     const videoId = userId + "/" + crypto.randomUUID();
 
-    // error handling
-    if (!DIRS_PATH) {
-        Logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, "DIRS_PATH is not provided");
-        return {
-            state: SubmitTripIdReturn.ERROR,
-            videoId,
-        };
-    }
+    Controller.startProcess(videoId, userId);
 
-    Controller.startProcess(videoId);
-    Logger.log(LoggerState.INFO, LoggerEmoji.PROCESS, "Creating process for user " + userId + " with videoId " + videoId);
-    const destination = path.resolve(process.cwd(), DIRS_PATH, videoId);
-    imagesLoader({ ...props, destination })
+    // load images
+    saveImages({ formData, videoId })
         .then(({ imagePaths }) => {
-            const path = { src: destination, name: "video" };
+            const path = { src: getDestinationPath(videoId), name: "video" };
             const { progress, duration } = createShow({ config, images: imagePaths, destination: path });
             Controller.addVideo({ videoId, progress, duration });
         })
         .catch((err) => {
             Logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, err as string);
+            throw new Error(err as string);
         });
 
     return { state: SubmitTripIdReturn.RUNNING, videoId };

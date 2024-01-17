@@ -1,9 +1,9 @@
-import { ConnectEffect, EffectEffect, MotionEffect, type OutputFPS, XFadeTransition } from "../../schemas/enums";
+import { ConnectEffect, EffectEffect, MotionEffect, XFadeTransition, type OutputFPS } from "../../schemas/enums";
 import { type IMotionEffect } from "../../schemas/interfaces";
 import { roundedSum } from "../../utils/utils";
 import { getScriptForXFade } from "../functions/functions";
-import { type IClipChildrenProps } from "./Clip";
 import type Clip from "./Clip";
+import { type IClipChildrenProps } from "./Clip";
 import { type IClipModule } from "./Interface";
 
 export enum ZoomPosition {
@@ -50,6 +50,8 @@ class Effect implements IClipModule {
         const appendComma = () => {
             effectScript.push(",");
         };
+
+        console.log("this.clip.effects", this.clip.effects);
 
         this.clip.effects.forEach((effect, index) => {
             if (index !== 0) {
@@ -111,6 +113,7 @@ class Effect implements IClipModule {
                 effectScript.push(code);
             }
         });
+        console.log("🚀 ~ file: Effects.ts:114 ~ Effect ~ this.clip.effects.forEach ~ this.clip.effects:", this.clip.effects);
         return this.clip.label + effectScript.join("") + this.clip.newLabel + ";";
     };
 

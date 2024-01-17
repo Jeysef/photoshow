@@ -3,7 +3,8 @@ type EnumTypeValue<T extends EnumType> = T[keyof T];
 type EnumTypeValues<T extends EnumType> = EnumTypeValue<T>[];
 
 export const getRandomEnum = <T extends EnumType>(anEnum: T, except?: EnumTypeValues<T>): EnumTypeValue<T> => {
-    const enumValues = getEnumValues(anEnum).filter((value) => except && except.includes(value));
+    let enumValues = getEnumValues(anEnum);
+    if (except) enumValues = enumValues.filter((value) => !except.includes(value));
     const randomIndex = getRandomArrayIndex(enumValues);
     return enumValues[randomIndex]!;
 };
@@ -18,8 +19,8 @@ export function getEnumValues<T extends EnumType>(anEnum: T): EnumTypeValues<T> 
 
 /**
  *
- * @param min
- * @param max
+ * @param min (inclusive)
+ * @param max (exclusive)
  * @returns {number} random number between min and max (inclusive min, exclusive max)
  */
 export function getRandomNumber(min: number, max: number): number {
@@ -28,8 +29,8 @@ export function getRandomNumber(min: number, max: number): number {
 
 /**
  *
- * @param min
- * @param max
+ * @param min (inclusive)
+ * @param max (inclusive)
  * @returns {number} random number between min and max (inclusive min, inclusive max)
  */
 export function getRandomNumberIncl(min: number, max: number): number {
