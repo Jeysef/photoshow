@@ -40,3 +40,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# generated
+/dirs
+fullScript.txt
+filterComplex.txt
