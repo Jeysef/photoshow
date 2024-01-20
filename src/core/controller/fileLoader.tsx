@@ -1,8 +1,8 @@
 import { FormFieldNames } from "@/components/pages/edit/formSchema";
+import { getDestinationPath } from "@/core/helpers";
 import * as fs from "fs";
 import path from "path";
 import { type VideoId } from "../../types/types";
-import { getDestinationPath } from "../helpers";
 import { LoggerEmoji, LoggerState } from "./enums";
 import Logger from "./logger";
 
@@ -10,7 +10,7 @@ export default async function saveImages(props: { formData: FormData; videoId: V
     const { formData, videoId } = props;
     const destination = getDestinationPath(videoId);
 
-    if (fs.existsSync(destination)) {
+    if (folderExists(destination)) {
         Logger.log(LoggerState.INFO, LoggerEmoji.ERROR, "Directory for trip already exists. Cleaning up...");
         deleteVideoFolder(videoId);
     }
@@ -30,17 +30,15 @@ function getFilesFromFormData(formData: FormData): File[] {
     return files;
 }
 
-async function writeImages(files: File[], directory: string): Promise<{ images: string[] }> {
+export async function writeImages(files: File[], directory: string): Promise<{ images: string[] }> {
     const imagePaths = await Promise.all(files.map((file) => writeFile(file, directory)));
 
     return { images: imagePaths };
 }
 
-async function writeFile(file: File, directory: string): Promise<string> {
+export async function writeFile(file: File, directory: string): Promise<string> {
     try {
-        if (typeof directory !== "string") {
-            throw new Error("Invalid directory");
-        } else if (!file.size) {
+        if (!file.size) {
             throw new Error("Invalid file");
         }
         const imagePath = path.join(directory, file.name);
@@ -55,46 +53,36 @@ async function writeFile(file: File, directory: string): Promise<string> {
 }
 
 export function deleteVideoFolder(videoId: VideoId) {
-    console.log("Deleting video folder: ", videoId);
     const destination = getDestinationPath(videoId);
-    if (fs.existsSync(destination)) {
-        fs.rm(destination, {}, (err) => {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log("Deleted video folder: ", destination, "successfully");
-            }
-        });
+    if (folderExists(destination)) {
+        fs.rmdirSync(destination, { recursive: true });
     }
 }
 
 export function deleteImagesFromFolder(videoId: VideoId) {
     console.log("Deleting images from folder: ", videoId);
     const destination = getDestinationPath(videoId);
-    if (fs.existsSync(destination)) {
-        fs.readdir(destination, (err, files) => {
-            if (err) {
-                console.error(err);
-            } else {
-                for (const file of files) {
-                    if (file.endsWith(".jpg")) {
-                        fs.unlink(path.join(destination, file), (err) => {
-                            if (err) {
-                                console.error(err);
-                            } else {
-                                console.log("Deleted image: ", file, "successfully");
-                            }
-                        });
-                    }
-                }
-            }
-        });
+    const fileExtension = ".jpg";
+    if (folderExists(destination)) {
+        fs.readdirSync(destination)
+            .filter((file) => file.endsWith(fileExtension))
+            .map((file) => fs.unlinkSync(path.join(destination, file)));
+    }
+}
+export function folderExists(destination: string): boolean {
+    return fs.existsSync(destination);
+}
+
+export function createVideoFolder(videoId: VideoId): void {
+    const destination = getDestinationPath(videoId);
+    if (!folderExists(destination)) {
+        fs.mkdirSync(destination, { recursive: true });
     }
 }
 
-function createVideoFolder(videoId: VideoId) {
-    const destination = getDestinationPath(videoId);
-    if (!fs.existsSync(destination)) {
-        fs.mkdirSync(destination, { recursive: true });
+export function getImagesFromFolder(destination: VideoId): string[] {
+    if (folderExists(destination)) {
+        return fs.readdirSync(destination).filter((file) => file.endsWith(".jpg"));
     }
+    return [];
 }
