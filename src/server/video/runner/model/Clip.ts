@@ -21,6 +21,7 @@ import { ImageAsset } from "./Assets/ImageAsset";
 import { LumaAsset } from "./Assets/LumaAsset";
 import { TitleAsset } from "./Assets/TitleAsset";
 import { VideoAsset } from "./Assets/VideoAsset";
+import Duration from "./Duration";
 import Effect from "./Effects";
 import Filter from "./Filter";
 import Fit from "./Fit";
@@ -112,16 +113,42 @@ class Clip implements IClipInterface, Omit<IClip, "asset"> {
 
     private getFilterOrderArray: (keyof IClipInterface)[] = [
         // "startScript",
-        "formatScript",
+        // "formatScript",
         "fitScript",
         "filterScript",
-        "effectScript",
-        "fpsScript",
+        // "effectScript",
+        // "fpsScript",
         "customScript",
     ];
 
     public getScript(): string {
-        return this.getFilterOrderArray.map((key) => this[key]).join("");
+        // return this.getFilterOrderArray.map((key) => this[key]).join("");
+        // return (
+        //     this.label +
+        //     new Duration(this.childrenProps).getScript() +
+        //     "," +
+        //     new Fit(this.childrenProps).getScript() +
+        //     "," +
+        //     // new Filter(this.childrenProps).getScript(),
+        //     new Effect(this.childrenProps).getScript() +
+        //     "," +
+        //     new Duration(this.childrenProps).getScript() +
+        //     "," +
+        //     (this.asset.getCustomScript() ? this.asset.getCustomScript() + "," : "") +
+        //     this.newLabel +
+        //     ";"
+        // );
+        return (
+            new Script()
+                .addInLabel(this.label)
+                .add(new Duration(this.childrenProps).getScript())
+                // .add(new Fit(this.childrenProps).getScript())
+                .add(new Effect(this.childrenProps).getScript())
+                .add(new Duration(this.childrenProps).getScript())
+                .add(this.asset.getCustomScript())
+                .addOutLabel(this.newLabel)
+                .get()
+        );
     }
 
     get customScript(): string {
@@ -149,3 +176,31 @@ class Clip implements IClipInterface, Omit<IClip, "asset"> {
 }
 
 export default Clip;
+
+class Script {
+    private inLabel = "";
+    private outLabel = "";
+    private script = "";
+
+    addInLabel = (label: string) => {
+        this.inLabel = label;
+        return this;
+    };
+
+    addOutLabel = (label: string) => {
+        this.outLabel = label;
+        return this;
+    };
+
+    add = (script: string) => {
+        if (this.script !== "" && script !== "") {
+            this.script += ",";
+        }
+        this.script += script;
+        return this;
+    };
+
+    get = () => {
+        return this.inLabel + this.script + this.outLabel + ";";
+    };
+}

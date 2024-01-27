@@ -14,6 +14,7 @@ export default async function (props: ISubmitProps) {
         const { imagePaths } = await saveImages({ formData, videoId });
 
         const destination: IDestination = { name: "video", src: getDestinationPath(videoId) };
+        config.soundtrack = undefined;
 
         const configuration = new Configurator({ config, images: imagePaths, destination }).construct();
         const data = new Edit(configuration);

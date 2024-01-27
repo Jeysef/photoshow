@@ -2,7 +2,6 @@ import { getScriptForXFade } from "../../functions";
 import { ConnectEffect, EffectEffect, MotionEffect, XFadeTransition, type OutputFPS } from "../../types/enums";
 import { type IMotionEffect } from "../../types/interfaces";
 import { roundedSum } from "../../utils/utils";
-import type Clip from "./Clip";
 import { type IClipChildrenProps } from "./Clip";
 import { type IClipModule } from "./Interface";
 
@@ -20,26 +19,15 @@ export interface ISpeed {
 }
 
 class Effect implements IClipModule {
-    width: number;
-    height: number;
     static readonly speed: ISpeed = {
         slow: 1.5,
         medium: 2.5,
         fast: 3.5,
     };
-    fps: OutputFPS;
-    private readonly clip: Clip;
+    private readonly zoom: Zoom;
 
-    constructor(props: IClipChildrenProps) {
-        const {
-            clip,
-            output: { size, fps },
-        } = props;
-        const { width, height } = size;
-        this.width = width;
-        this.height = height;
-        this.clip = clip;
-        this.fps = fps;
+    constructor(private readonly props: IClipChildrenProps) {
+        this.zoom = new Zoom(props);
         return this;
     }
 
@@ -51,8 +39,7 @@ class Effect implements IClipModule {
             effectScript.push(",");
         };
 
-
-        this.clip.effects.forEach((effect, index) => {
+        this.props.clip.effects.forEach((effect, index) => {
             if (index !== 0) {
                 const currentEffectIsConnect = effect.type === ConnectEffect.CONNECT;
                 if (!currentEffectIsConnect) {
@@ -62,11 +49,11 @@ class Effect implements IClipModule {
 
             if (effect.type.startsWith("ZOOM_IN")) {
                 effect = effect as IMotionEffect;
-                effectScript.push(this.zoomIn(effect.speed, effect.type as MotionEffect));
+                effectScript.push(this.zoom.zoomIn(effect.speed, effect.type));
             }
             if (effect.type.startsWith("ZOOM_OUT")) {
                 effect = effect as IMotionEffect;
-                effectScript.push(this.zoomOut(effect.speed, effect.type as MotionEffect));
+                effectScript.push(this.zoom.zoomOut(effect.speed, effect.type));
             }
             if (effect.type === EffectEffect.BLUR) {
                 effectScript.push(this.blur(effect.duration, effect.speed));
@@ -75,21 +62,21 @@ class Effect implements IClipModule {
                 effectScript.push(this.grayscale(effect.duration, effect.speed));
             }
             if (effect.type === ConnectEffect.SPLIT) {
-                if (roundedSum(undefined, effect.stream1Duration, effect.stream2Duration) !== this.clip.duration) {
+                if (roundedSum(undefined, effect.stream1Duration, effect.stream2Duration) !== this.props.clip.duration) {
                     throw new Error(
                         "Sum of split effect durations is not equal to clip duration. Stream1: " +
                             effect.stream1Duration +
                             " Stream2: " +
                             effect.stream2Duration +
                             " Clip duration: " +
-                            this.clip.duration,
+                            this.props.clip.duration,
                     );
                 }
-                const splitLabel0 = `[effect_split${this.clip.index}_${index}no0_0]`;
-                const splitLabel1 = `[effect_split${this.clip.index}_${index}no1_0]`;
-                const splitLabel1_1 = `[effect_split${this.clip.index}_${index}no1_1]`;
+                const splitLabel0 = `[effect_split${this.props.clip.index}_${index}no0_0]`;
+                const splitLabel1 = `[effect_split${this.props.clip.index}_${index}no1_0]`;
+                const splitLabel1_1 = `[effect_split${this.props.clip.index}_${index}no1_1]`;
                 effectScript.push(`split=2${splitLabel0}${splitLabel1};`);
-                effectScript.push(`${splitLabel1}trim=start=${this.clip.duration - effect.stream2Duration},setpts=PTS-STARTPTS${splitLabel1_1};`);
+                effectScript.push(`${splitLabel1}trim=start=${this.props.clip.duration - effect.stream2Duration}${splitLabel1_1};`);
                 splitLabels.push(splitLabel1_1);
                 /**
                  * this stream is extended by connect duration because the extension is overlaid by xfade
@@ -100,7 +87,7 @@ class Effect implements IClipModule {
                 /**
                  * only temporary label is used here
                  */
-                const splitLabel0_1 = `[effect_split${this.clip.index}_${index}no0_1]`;
+                const splitLabel0_1 = `[effect_split${this.props.clip.index}_${index}no0_1]`;
                 if (!splitLabels.length) throw new Error("Connect effect is being used without split effect");
 
                 const code =
@@ -112,40 +99,9 @@ class Effect implements IClipModule {
                 effectScript.push(code);
             }
         });
-        return this.clip.label + effectScript.join("") + this.clip.newLabel + ";";
+        return effectScript.join("");
     };
 
-    /** this function returns pure script (without labels) */
-    private zoomIn = (zoomSpeed: number, zoomPosition: MotionEffect, zoomMax = 10) => {
-        const width = this.width;
-        const height = this.height;
-        const speed = zoomSpeed;
-        const frames = 1; // using frames from image video
-        const getScriptForZoomPosition = this.getScriptForZoomPosition(width, height);
-        return `scale=${width * 2}:${height * 2},zoompan=z='min(pzoom+0.001*${speed},${zoomMax})':d=${frames}:${getScriptForZoomPosition(zoomPosition)}:fps=${
-            this.fps
-        }:s=${width}x${height}`;
-    };
-    /** pure */
-    private zoomOut = (zoomSpeed: number, zoomPosition: MotionEffect, startingZoom = 1.5, zoomMin = 1.001) => {
-        const width = this.width;
-        const height = this.height;
-        const speed = zoomSpeed;
-        const frames = 1; // using frames from image video
-        if (startingZoom < 1) {
-            throw new Error("startingZoom must be greater than 1");
-        }
-        if (zoomMin < 1) {
-            throw new Error("zoomMin must be greater than 1");
-        }
-        const getScriptForZoomPosition = this.getScriptForZoomPosition(width, height);
-
-        return `scale=${width * 2}:${
-            height * 2
-        },zoompan=z='if(lte(pzoom,1.0),${startingZoom},max(${zoomMin},pzoom-0.001*${speed}))':d=${frames}:${getScriptForZoomPosition(zoomPosition)}:fps=${
-            this.fps
-        }:s=${width}x${height}`;
-    };
     /** pure */
     private blur = (duration: number, speed: number) => {
         // const blurSpeed = speed;
@@ -162,8 +118,58 @@ class Effect implements IClipModule {
     };
 
     public getScript = () => {
-        if (this.clip.effects.length === 0) return "";
+        if (this.props.clip.effects.length === 0) return "";
         return this.getEffects();
+    };
+}
+
+export default Effect;
+
+class Zoom {
+    private readonly frames: number;
+    private readonly width: number;
+    private readonly height: number;
+    private readonly scriptForZoomPosition: (zoomPosition: MotionEffect) => string;
+    private readonly fps: OutputFPS;
+
+    constructor(private readonly props: IClipChildrenProps) {
+        this.frames = props.clip.duration * props.output.fps;
+        const {
+            output: { size, fps },
+        } = props;
+        const { width, height } = size;
+        this.width = width;
+        this.height = height;
+        this.fps = fps;
+        this.scriptForZoomPosition = this.getScriptForZoomPosition(width, height);
+    }
+
+    public zoomIn = (zoomSpeed: number, zoomPosition: MotionEffect, zoomMax = 10) => {
+        const width = this.width;
+        const height = this.height;
+        const speed = zoomSpeed;
+        return `scale=${width * 2}:${height * 2},zoompan=z='min(zoom+0.001*${speed},${zoomMax})':d=${this.frames}:${this.scriptForZoomPosition(zoomPosition)}:fps=${
+            this.fps
+        }:s=${width}x${height}`;
+    };
+
+    public zoomOut = (zoomSpeed: number, zoomPosition: MotionEffect, startingZoom = 1.5, zoomMin = 1.001) => {
+        const width = this.width;
+        const height = this.height;
+        const speed = zoomSpeed;
+        const frames = Math.floor(this.props.clip.duration * this.fps);
+        if (startingZoom < 1) {
+            throw new Error("startingZoom must be greater than 1");
+        }
+        if (zoomMin < 1) {
+            throw new Error("zoomMin must be greater than 1");
+        }
+
+        return `scale=${width * 2}:${
+            height * 2
+        },zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.001*${speed}))':d=${frames}:${this.scriptForZoomPosition(zoomPosition)}:fps=${
+            this.fps
+        }:s=${width}x${height}`;
     };
 
     private getScriptForZoomPosition(width: number, height: number) {
@@ -188,5 +194,3 @@ class Effect implements IClipModule {
         };
     }
 }
-
-export default Effect;

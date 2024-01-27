@@ -1,22 +1,12 @@
 import { FilterType } from "../../types/enums";
-import type Clip from "./Clip";
 import { type IClipChildrenProps } from "./Clip";
 import { type IClipModule } from "./Interface";
 class Filter implements IClipModule {
-    private readonly clip: Clip;
-    script: string;
-
-    constructor(props: IClipChildrenProps) {
-        const { clip } = props;
-        this.clip = clip;
-        this.script = this.getFilter(props);
-        return this;
-    }
+    constructor(private readonly props: IClipChildrenProps) {}
 
     getFilter = (props: IClipChildrenProps) => {
-        const {
-            clip: { filter },
-        } = props;
+        const { clip } = props;
+        const { filter } = clip;
         let filterScript = "";
         switch (filter) {
             case FilterType.BLUR:
@@ -29,20 +19,17 @@ class Filter implements IClipModule {
                 filterScript += "colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3";
                 break;
         }
-        if (this.clip.opacity !== undefined) {
+        if (clip.opacity !== undefined) {
             if (filterScript !== "") {
                 filterScript += ",";
             }
-            filterScript += `colorchannelmixer=aa=${this.clip.opacity}`;
+            filterScript += `colorchannelmixer=aa=${clip.opacity}`;
         }
-        if (filterScript !== "") {
-            return `${this.clip.label}${filterScript}${this.clip.newLabel};`;
-        }
-        return "";
+        return filterScript;
     };
 
     getScript = () => {
-        return this.script;
+        return this.getFilter(this.props);
     };
 }
 
