@@ -16,7 +16,8 @@
     "typesafety",
     "uploadthing",
     "usequerystate",
-    "utapi"
+    "utapi",
+    "zoompan"
   ],
   "npm.scriptExplorerAction": "run",
   "editor.codeActionsOnSave": {

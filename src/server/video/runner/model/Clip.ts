@@ -138,17 +138,15 @@ class Clip implements IClipInterface, Omit<IClip, "asset"> {
         //     this.newLabel +
         //     ";"
         // );
-        return (
-            new Script()
-                .addInLabel(this.label)
-                .add(new Duration(this.childrenProps).getScript())
-                // .add(new Fit(this.childrenProps).getScript())
-                .add(new Effect(this.childrenProps).getScript())
-                .add(new Duration(this.childrenProps).getScript())
-                .add(this.asset.getCustomScript())
-                .addOutLabel(this.newLabel)
-                .get()
-        );
+        return new Script()
+            .addInLabel(this.label)
+            .add(new Duration(this.childrenProps).getScript())
+            .add(new Fit(this.childrenProps).getScript())
+            .add(new Effect(this.childrenProps).getScript())
+            .add(new Duration(this.childrenProps).getScript())
+            .add(this.asset.getCustomScript())
+            .addOutLabel(this.newLabel)
+            .get();
     }
 
     get customScript(): string {

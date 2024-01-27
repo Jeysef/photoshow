@@ -97,7 +97,7 @@ export class Configurator {
 
     private createEffectsForImage = (duration: number, i: number): IEffect[] => {
         const effects: IEffect[] = [];
-        const speed = 0.55;
+        const speed = 0.3;
         effects.push({ type: i === 0 ? MotionEffect.ZOOM_IN_CENTER : getRandomEnum(MotionEffect), duration, speed });
         return effects;
     };

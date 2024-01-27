@@ -131,6 +131,9 @@ class Zoom {
     private readonly height: number;
     private readonly scriptForZoomPosition: (zoomPosition: MotionEffect) => string;
     private readonly fps: OutputFPS;
+    private readonly scaleUp: string;
+    private readonly scaleBack: string;
+    private readonly fpsScript: string;
 
     constructor(private readonly props: IClipChildrenProps) {
         this.frames = props.clip.duration * props.output.fps;
@@ -142,20 +145,18 @@ class Zoom {
         this.height = height;
         this.fps = fps;
         this.scriptForZoomPosition = this.getScriptForZoomPosition(width, height);
+        const scaleUpMultiplier = 10;
+        this.scaleUp = `scale=${width * scaleUpMultiplier}:${height * scaleUpMultiplier}`;
+        this.scaleBack = `s=${width}x${height}`;
+        this.fpsScript = `fps=${this.fps}`;
     }
 
     public zoomIn = (zoomSpeed: number, zoomPosition: MotionEffect, zoomMax = 10) => {
-        const width = this.width;
-        const height = this.height;
         const speed = zoomSpeed;
-        return `scale=${width * 2}:${height * 2},zoompan=z='min(zoom+0.001*${speed},${zoomMax})':d=${this.frames}:${this.scriptForZoomPosition(zoomPosition)}:fps=${
-            this.fps
-        }:s=${width}x${height}`;
+        return `${this.scaleUp},zoompan=z='min(zoom+0.001*${speed},${zoomMax})':d=${this.frames}:${this.scriptForZoomPosition(zoomPosition)}:${this.fpsScript}:${this.scaleBack}`;
     };
 
     public zoomOut = (zoomSpeed: number, zoomPosition: MotionEffect, startingZoom = 1.5, zoomMin = 1.001) => {
-        const width = this.width;
-        const height = this.height;
         const speed = zoomSpeed;
         const frames = Math.floor(this.props.clip.duration * this.fps);
         if (startingZoom < 1) {
@@ -165,11 +166,7 @@ class Zoom {
             throw new Error("zoomMin must be greater than 1");
         }
 
-        return `scale=${width * 2}:${
-            height * 2
-        },zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.001*${speed}))':d=${frames}:${this.scriptForZoomPosition(zoomPosition)}:fps=${
-            this.fps
-        }:s=${width}x${height}`;
+        return `${this.scaleUp},zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.001*${speed}))':d=${frames}:${this.scriptForZoomPosition(zoomPosition)}:${this.fpsScript}:${this.scaleBack}`;
     };
 
     private getScriptForZoomPosition(width: number, height: number) {
