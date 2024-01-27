@@ -1,5 +1,8 @@
+import type { OutputResolution } from "@/server/video/types/enums";
 import { type FFMpegProgress } from "ffmpeg-progress-wrapper";
-import { type OutputResolution } from "../core/schemas/enums";
+import type moods from "../../moods/moods.json";
+
+export type Mood = (typeof moods)[number];
 
 export enum ProcessState {
     LOADING_IMAGES = "LOADING_IMAGES",
@@ -50,7 +53,7 @@ export enum OrientationType {
 }
 
 export interface IConfig {
-    soundtrack?: string;
+    soundtrack?: Mood["name"];
     resolution?: OutputResolution;
     orientation?: OrientationType;
     title?: string;
@@ -59,7 +62,7 @@ export interface IConfig {
 export interface ISubmitProps {
     formData: FormData;
     config: IConfig;
-    userId: string;
+    userId: UserId;
 }
 
 export interface ISubmitReturnProps {
@@ -68,3 +71,5 @@ export interface ISubmitReturnProps {
 }
 
 export type UserId = string;
+
+export type IMood = Mood;

@@ -40,7 +40,8 @@
     "**/*.js",
     ".next/types/**/*.ts",
     "tailwind.config.ts",
-    "jest.config.mjs"
+    "jest.config.js",
+    "src/env.js"
   ],
   "exclude": ["node_modules"]
 }

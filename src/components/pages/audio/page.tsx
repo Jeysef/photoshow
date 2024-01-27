@@ -1,11 +1,11 @@
 "use client";
 import { Button } from "@/components/components/button";
 import { Skeleton } from "@/components/components/skeleton";
+import type { IMood } from "@/types/types";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { analyze } from "web-audio-beat-detector";
 import { writeToJsonFile } from "./WriteToMood";
-import { type IMood } from "./types";
 
 export default function Home() {
     const [bpm, setBpm] = useState<number | null>(null);
@@ -31,6 +31,7 @@ export default function Home() {
                             name: file.name,
                             tempo,
                             duration: audioElement.duration,
+                            manual: false,
                         };
 
                         await writeToJsonFile(data);

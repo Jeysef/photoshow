@@ -57,7 +57,7 @@ export function UploadDropzone(props: UploadDropzoneProps) {
                 params: new URLSearchParams(formValues),
             })
             .then((res) => {
-                console.log("res", res);
+                console.log(res.data);
             })
             .catch((err) => {
                 if (axios.isAxiosError(err)) {

@@ -1,0 +1,98 @@
+{
+  "_timeline": {
+    "_tracks": [
+      {
+        "_clips": [
+          {
+            "fit": "crop",
+            "effects": [
+              {
+                "type": "ZOOM_IN_CENTER",
+                "duration": 4.57,
+                "speed": 0.55
+              }
+            ],
+            "_asset": {
+              "asset": {
+                "type": "image",
+                "src": ""
+              },
+              "_type": "image",
+              "_src": "http://placekitten.com/g/200/300"
+            },
+            "_start": 0,
+            "_length": 4.57,
+            "transition": {
+              "in": "smoothleft",
+              "out": "smoothleft"
+            }
+          },
+          {
+            "fit": "crop",
+            "effects": [
+              {
+                "type": "ZOOM_IN_CENTER",
+                "duration": 5.14,
+                "speed": 0.55
+              }
+            ],
+            "_asset": {
+              "asset": {
+                "type": "image",
+                "src": ""
+              },
+              "_type": "image",
+              "_src": "http://placekitten.com/g/200/300"
+            },
+            "_start": 4.57,
+            "_length": 5.14,
+            "transition": {
+              "in": "smoothleft",
+              "out": "diagbr"
+            }
+          },
+          {
+            "fit": "crop",
+            "effects": [
+              {
+                "type": "ZOOM_OUT_CENTER",
+                "duration": 4.57,
+                "speed": 0.55
+              }
+            ],
+            "_asset": {
+              "asset": {
+                "type": "image",
+                "src": ""
+              },
+              "_type": "image",
+              "_src": "http://placekitten.com/g/200/300"
+            },
+            "_start": 9.71,
+            "_length": 4.57,
+            "transition": {
+              "in": "diagbr",
+              "out": "fadewhite"
+            }
+          }
+        ]
+      }
+    ],
+    "soundtrack": {
+      "src": "C:\\web\\me\\photoshow2\\soundtracks\\adventure-travel-128404.mp3"
+    }
+  },
+  "_output": {
+    "resolution": "1080",
+    "fps": 30,
+    "size": {
+      "width": 1024,
+      "height": 576
+    },
+    "destination": {
+      "name": "test",
+      "src": "out"
+    },
+    "format": "mp4"
+  }
+}

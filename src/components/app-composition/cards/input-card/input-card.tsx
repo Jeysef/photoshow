@@ -1,4 +1,4 @@
-import { OutputResolution } from "@/core/schemas/enums";
+import { OutputResolution } from "@/server/video/types/enums";
 import { OrientationType } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

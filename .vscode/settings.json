@@ -28,5 +28,6 @@
   "typescript.inlayHints.parameterNames.enabled": "all",
   "typescript.inlayHints.parameterTypes.enabled": true,
   "files.autoSave": "onFocusChange",
-  "turboConsoleLog.includeFileNameAndLineNum": true
+  "turboConsoleLog.includeFileNameAndLineNum": true,
+  "typescript.preferences.preferTypeOnlyAutoImports": true
 }

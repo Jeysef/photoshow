@@ -1,6 +1,5 @@
 import moodsFile from "@/../moods/moods.json";
-import { type IMood } from "@/components/pages/audio/types";
-import { AUDIO_PATH } from "@/constants";
+import { env } from "@/env";
 import fs from "fs";
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import path from "path";
@@ -10,7 +9,7 @@ import path from "path";
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const moods = moodsFile as IMood[];
+        const moods = moodsFile;
         res.status(200).json(moods.map((mood) => mood.name));
     } catch (err) {
         console.error(err);
@@ -19,5 +18,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 export function getAudioNames() {
-    return fs.promises.readdir(path.resolve(process.cwd(), AUDIO_PATH ?? ""));
+    return fs.promises.readdir(path.resolve(process.cwd(), env.NEXT_PUBLIC_MOODS_FILE));
 }

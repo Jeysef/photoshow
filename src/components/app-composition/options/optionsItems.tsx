@@ -1,15 +1,15 @@
 "use client";
 import Center from "@/components/center";
-import { Loader } from "@/components/loader";
 import { Button } from "@/components/components/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/components/collapsible";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/components/form";
 import { Input } from "@/components/components/input";
 import { RadioGroup, RadioGroupItem } from "@/components/components/radio-group";
-import { OutputResolution } from "@/core/schemas/enums";
+import { Loader } from "@/components/loader";
+import { OutputResolution } from "@/server/video/types/enums";
 import { OrientationType } from "@/types/types";
 import { ChevronsUpDown } from "lucide-react";
-import { type FC, type PropsWithChildren, Suspense } from "react";
+import { Suspense, type FC, type PropsWithChildren } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { FormFieldNames, type FormValues } from "../../pages/edit/formSchema";
 import { type IAudioList } from "./audio-list/audioList";

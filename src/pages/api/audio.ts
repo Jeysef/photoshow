@@ -1,4 +1,4 @@
-import { AUDIO_PATH } from "@/constants";
+import { env } from "@/env";
 import { createReadStream } from "fs";
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import { resolve } from "path";
@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(400).end();
             return;
         }
-        const musicsPath = AUDIO_PATH;
+        const musicsPath = env.NEXT_PUBLIC_SOUNDTRACKS_DIR;
         const musicPath = resolve(musicsPath, audioName as string);
         // return music file
         createReadStream(musicPath).pipe(res);
