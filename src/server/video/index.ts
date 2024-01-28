@@ -19,8 +19,8 @@ export default async function (props: ISubmitProps) {
         const configuration = new Configurator({ config, images: imagePaths, destination }).construct();
         const data = new Edit(configuration);
 
-        runFFmpeg(data);
-        return { videoId };
+        const stream = runFFmpeg(data);
+        return { videoId, stream };
     } catch (err) {
         console.error(err);
         return;

@@ -4,10 +4,8 @@ import { twMerge } from "tailwind-merge";
 import { allowedContentTextLabelGenerator, classNames, generateClientDropzoneAccept, generatePermittedFileTypes } from "uploadthing/client";
 
 import type { ExpandedRouteConfig } from "@uploadthing/shared";
-import { useDropzone } from "react-dropzone";
-// import { getFilesFromClipboardEvent, progressWidths, Spinner } from "./shared";
-import axios from "axios";
 import { Loader2, UploadCloud } from "lucide-react";
+import { useDropzone } from "react-dropzone";
 import { type UseFormReturn } from "react-hook-form";
 import Options from "../app-composition/options/options";
 import { FormFieldNames, type FormValues } from "../pages/edit/formSchema";
@@ -42,30 +40,34 @@ export function UploadDropzone(props: UploadDropzoneProps) {
     const [isUploading, setIsUploading] = useState(false);
 
     async function startUpload(formData: FormData, formValues: FormValues) {
+        const textDecoder = new TextDecoder();
+        const consoleLogStream = new WritableStream<Uint8Array>({
+            write(chunk) {
+                console.log(textDecoder.decode(chunk));
+            },
+            close() {
+                console.log("done");
+            },
+            abort(err) {
+                console.log("err", err);
+            },
+        });
+
         setIsUploading(true);
-        axios
-            .post("/api/image-upload", formData, {
-                onUploadProgress: (progressEvent) => {
-                    const progress = (progressEvent.loaded / (progressEvent.total ?? progressEvent.loaded)) * 100;
-                    setUploadProgress(Math.round(progress));
-                    const uploaded = progressEvent.upload;
-                    if (uploaded) {
-                        setIsUploading(false);
-                    }
-                    console.log("progress", progressEvent.progress);
-                },
-                params: new URLSearchParams(formValues),
-            })
-            .then((res) => {
-                console.log(res.data);
+        fetch("/api/image-upload?" + new URLSearchParams(formValues).toString(), {
+            method: "POST",
+            body: formData,
+            signal: new AbortController().signal,
+        })
+            .then((response) => {
+                if (!response.body) {
+                    throw new Error("The response body is empty.");
+                }
+                void response.body.pipeTo(consoleLogStream);
             })
             .catch((err) => {
-                if (axios.isAxiosError(err)) {
-                    console.log("axios err", err);
-                } else {
-                    console.log("err", err);
-                    // handleUnexpectedError(error);
-                }
+                console.log("err", err);
+                // handleUnexpectedError(error);
             });
     }
 

@@ -3,10 +3,21 @@ import axios from "axios";
 import React from "react";
 
 const MyComponent: React.FC = () => {
+    const textDecoder = new TextDecoder();
+    const consoleLogStream = new WritableStream<Uint8Array>({
+        write(chunk) {
+            console.log(textDecoder.decode(chunk));
+        },
+        close() {
+            console.log("done");
+        },
+        abort(err) {
+            console.log("err", err);
+        },
+    });
+
     const handleClick = async () => {
         try {
-            const textDecoder = new TextDecoder();
-
             // axios
             //     .get("/api/test", {
             //         responseType: "stream",
@@ -25,19 +36,7 @@ const MyComponent: React.FC = () => {
             const fetchData = await fetch("/api/test");
             const body = fetchData.body as ReadableStream;
             // pipe the result stream into a console log
-            void body.pipeTo(
-                new WritableStream<Uint8Array>({
-                    write(chunk) {
-                        console.log(textDecoder.decode(chunk));
-                    },
-                    close() {
-                        console.log("done");
-                    },
-                    abort(err) {
-                        console.log("err", err);
-                    },
-                }),
-            );
+            void body.pipeTo(consoleLogStream);
 
             // console.log((await fetch("/api/test")).body as ReadableStream);
         } catch (error) {
@@ -48,30 +47,85 @@ const MyComponent: React.FC = () => {
         try {
             const textDecoder = new TextDecoder();
 
-            const DUMMY_URL = "/api/test2";
-            // use axios to get a Readable stream response
-            const vv = await axios.get(DUMMY_URL, {
-                responseType: "stream",
+            const response = await fetch("/api/test", { method: "GET", headers: { "Content-Type": "text/event-stream" } });
+
+            const writableStream = new WritableStream<string>({
+                write(chunk) {
+                    console.log("chunk", chunk);
+                },
+                close() {
+                    console.log("done");
+                },
+                abort(err) {
+                    console.log("err", err);
+                },
+                start(controller) {
+                    console.log("start");
+                },
             });
-            console.log("🚀 ~ file: page.tsx:56 ~ handleClick2 ~ vv:", vv);
-            // console.log("🚀 ~ file: page.tsx:56 ~ handleClick2 ~ data:", data);
 
-            // now, you can process or transform the data as a Readable type.
-            // void data.pipe(
-            //     new WritableStream<Uint8Array>({
-            //         write(chunk) {
-            //             console.log(textDecoder.decode(chunk));
-            //         },
-            //         close() {
-            //             console.log("done");
-            //         },
-            //         abort(err) {
-            //             console.log("err", err);
-            //         },
-            //     }),
-            // );
-
-            // console.log((await fetch("/api/test")).body as ReadableStream);
+            console.log(" response body", response.body);
+            const reader = response.body!.pipeThrough(new TextDecoderStream()).pipeTo(writableStream);
+            // while (true) {
+            //     const { value, done } = await reader.read();
+            //     if (done) break;
+            //     console.log("Received :", value);
+            // }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+    const handleClick3 = async () => {
+        try {
+            fetch("/api/test3", {
+                method: "GET",
+                // headers: {
+                //     "Content-Type": "text/event-stream",
+                // },
+            })
+                .then((res) => {
+                    void res.body?.pipeTo(consoleLogStream);
+                })
+                .catch((err) => {
+                    if (axios.isAxiosError(err)) {
+                        console.log("axios err", err);
+                    } else {
+                        console.log("err", err);
+                        // handleUnexpectedError(error);
+                    }
+                });
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+    const handleClick4 = async () => {
+        try {
+            axios
+                .get("/api/test3", {
+                    responseType: "stream",
+                    onDownloadProgress: (progressEvent) => {
+                        console.log("progressEvent", progressEvent);
+                    },
+                })
+                .then((res) => {
+                    console.log(res.data);
+                })
+                .catch((err) => {
+                    if (axios.isAxiosError(err)) {
+                        console.log("axios err", err);
+                    } else {
+                        console.log("err", err);
+                        // handleUnexpectedError(error);
+                    }
+                });
+            // void axios({
+            //     method: "get",
+            //     url: "https://bit.ly/2mTM3nY",
+            //     responseType: "stream",
+            // }).then(function (response) {
+            //     console.log("response", response.data);
+            //     // response.data.pipe(consoleLogStream);
+            // });
         } catch (error) {
             console.error("Error:", error);
         }
@@ -81,6 +135,8 @@ const MyComponent: React.FC = () => {
         <>
             <button onClick={handleClick}>Click Me</button>
             <button onClick={handleClick2}>Click Me</button>
+            <button onClick={handleClick3}>test3 fetch</button>
+            <button onClick={handleClick4}>test3 axios</button>
         </>
     );
 };

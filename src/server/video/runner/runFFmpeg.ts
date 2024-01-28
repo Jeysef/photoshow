@@ -76,11 +76,12 @@ export function runFFmpeg(data: Edit) {
                     console.log("Processing: 100%");
                     console.log("Execution time:", duration, "ms");
                     console.log("Output file is: " + data.outputName());
+                    controller.enqueue("100");
                     controller.close();
                 })
                 .on("error", (err) => {
                     console.log("An error occurred: " + err);
-                    controller.close();
+                    controller.error(err);
                 })
                 .on("codecData", function (data: { audio: string; video: string }) {
                     console.log("Input is " + data.audio + " audio " + "with " + data.video + " video");

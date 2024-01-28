@@ -1,3 +1,4 @@
+import { StreamingTextResponse } from "ai";
 function iteratorToStream(iterator: AsyncGenerator<Uint8Array, void, unknown>) {
     return new ReadableStream({
         async pull(controller) {
@@ -28,12 +29,14 @@ async function* makeIterator() {
     yield encoder.encode("<p>Three</p>");
 }
 
-export function GET() {
+export async function GET(req: Request) {
+    // Extract the `messages` from the body of the request
+
     const iterator = makeIterator();
     const stream = iteratorToStream(iterator);
     // pipe the stream to the stdout
 
-    return new Response(stream);
+    return new StreamingTextResponse(stream);
 }
 
 // export const dynamic = "force-dynamic";

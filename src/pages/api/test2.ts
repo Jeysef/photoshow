@@ -1,46 +1,26 @@
+import { EventEmitter } from "events";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-function iteratorToStream(iterator: AsyncGenerator<Uint8Array, void, unknown>) {
-    return new ReadableStream({
-        async pull(controller) {
-            const { value, done } = await iterator.next();
+export default function GET(request: NextApiRequest, response: NextApiResponse) {
+    const emitter = new EventEmitter();
+    let count = 0;
 
-            if (done) {
-                controller.close();
-            } else {
-                controller.enqueue(value);
-            }
-        },
+    response.useChunkedEncodingByDefault = true;
+    // Set the 'Transfer-Encoding: chunked' header
+    response.setHeader("Transfer-Encoding", "chunked");
+    response.setHeader("Content-Type", "text/event-stream");
+    response.flushHeaders();
+    response.uncork();
+
+    emitter.on("text", (text: string) => {
+        response.write(text);
+        count++;
+
+        if (count === 4) {
+            response.end();
+        }
     });
+    setInterval(() => {
+        emitter.emit("text", "Hello, world!\n");
+    }, 4000);
 }
-
-function sleep(time: number) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, time);
-    });
-}
-
-const encoder = new TextEncoder();
-
-async function* makeIterator() {
-    yield encoder.encode("<p>One</p>");
-    await sleep(2000);
-    yield encoder.encode("<p>Two</p>");
-    await sleep(2000);
-    yield encoder.encode("<p>Three</p>");
-}
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-    const iterator = makeIterator();
-    const stream = iteratorToStream(iterator);
-    // pipe the stream to the stdout
-    // const vv = await stream.getReader().read();
-    // console.log("🚀 ~ file: route.ts:36 ~ GET ~ vv:", vv);
-    // res
-    // stream.pipeTo(res);
-    return new Response(stream);
-}
-
-export const config = {
-    runtime: "edge",
-};
