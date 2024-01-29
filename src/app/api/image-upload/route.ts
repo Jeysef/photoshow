@@ -1,4 +1,6 @@
 import video from "@/server/video";
+import logger from "@/server/video/logger";
+import { LoggerEmoji, LoggerState } from "@/server/video/logger/enums";
 import { SubmitTripIdReturn, type IConfig, type VideoId } from "@/types/types";
 import { currentUser } from "@clerk/nextjs/server";
 import { StreamingTextResponse } from "ai";
@@ -16,6 +18,7 @@ export const POST = async (request: NextRequest) => {
         return Response.json(res);
     }
     const config = Object.fromEntries(request.nextUrl.searchParams.entries()) as Partial<IConfig>;
+    logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Recieved config: " + JSON.stringify(config));
     const formData = await request.formData();
     const data = await video({ config, formData, userId });
     if (!data) {
