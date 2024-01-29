@@ -72,6 +72,7 @@ export default function useUploader(props: IUploaderProps) {
     });
 
     const upload = async ({ formData, formValues }: IUploaderUploadProps) => {
+        props.setState(LoadingState.WAITING);
         setIsUploading(true);
         fetch(api + "?" + new URLSearchParams(formValues).toString(), {
             method: "POST",
