@@ -58,6 +58,12 @@ const uploadRouter = {
             // !!! Whatever is returned here is sent to the client side `onClientUploadComplete` callback
             return { uploadedBy: metadata.userId, url: file.url };
         }),
+
+    videoUploader: f({
+        video: { maxFileSize: "256MB", maxFileCount: 1 },
+    })
+        .middleware(auth)
+        .onUploadComplete((data) => console.log("file", data)),
 } satisfies FileRouter;
 
 type UploadRouter = typeof uploadRouter;
@@ -65,3 +71,13 @@ type UploadRouter = typeof uploadRouter;
 const utapi = new UTApi();
 
 export { uploadRouter, utapi, type UploadRouter };
+
+async function auth() {
+    const userId = (await currentUser())?.id;
+
+    // If you throw, the user will not be able to upload
+    if (!userId) throw new Error("Unauthorized");
+
+    // Whatever is returned here is accessible in onUploadComplete as `metadata`
+    return { userId };
+}

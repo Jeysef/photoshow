@@ -19,7 +19,6 @@ describe("Should configurator output expected result", () => {
         };
         const configurator = new Configurator(configuratorProps);
         const edit = configurator.construct();
-        // console.log(JSON.stringify(edit, null, 2));
         expect(edit.output.destination).toEqual(configuratorProps.destination);
         expect(edit.output.resolution).toEqual(configuratorProps.config.resolution);
         expect(edit.timeline.tracks[0]).not.toBeUndefined();

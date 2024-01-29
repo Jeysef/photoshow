@@ -85,3 +85,12 @@ export function getImagesFromFolder(destination: VideoId): string[] {
     }
     return [];
 }
+
+export function getVideoFile(videoPath: string, videoName: string): File {
+    const existVideoFile = fs.existsSync(videoPath);
+    if (existVideoFile) {
+        const buffer = fs.readFileSync(videoPath);
+        return new File([buffer], videoPath);
+    }
+    throw new Error("Video file does not exist");
+}

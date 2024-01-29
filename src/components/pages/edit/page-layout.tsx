@@ -7,6 +7,7 @@ import InputCard from "../../app-composition/cards/input-card/input-card";
 import Loading from "../../app-composition/cards/loading-card/loading-card";
 import Video from "../../app-composition/cards/video-card/video-card";
 import { LoadingState, type IContext } from "./types";
+import useUploader from "./uploader";
 
 function CardContainer({ children }: { children: JSX.Element }) {
     return (
@@ -36,6 +37,8 @@ function PageLayout() {
     const [videoUrl, setVideoUrl] = useState<string>("");
     const [videoProgress, setVideoProgress] = useState<number>(0);
     const [videoId, setVideoId] = useState<string>("");
+
+    const uploader = useUploader({});
 
     const InputSide = () => {
         const InputSideInside = () => {

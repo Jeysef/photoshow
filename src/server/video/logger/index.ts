@@ -1,4 +1,5 @@
-import { type LoggerEmoji, type LoggerState } from "./enums";
+import { env } from "@/env";
+import { LoggerState, type LoggerEmoji } from "./enums";
 
 class Logger {
     private static instance: Logger;
@@ -11,6 +12,7 @@ class Logger {
     }
 
     public log = (state: LoggerState, emoji: LoggerEmoji, message: string) => {
+        if (state === LoggerState.DEBUG && env.NODE_ENV !== "development") return;
         console.log(`${state}${emoji} ${message}\x1b[0m`);
     };
 }

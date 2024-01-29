@@ -1,32 +1,30 @@
+import { env } from "@/env";
+import type { VideoId } from "@/types/types";
+import { ShowStreamType, type IShowStreamData } from "@/types/types";
 import ffmpeg from "fluent-ffmpeg";
+import logger from "../logger";
+import { LoggerEmoji, LoggerState } from "../logger/enums";
 import type Edit from "./Edit";
 
-export interface IShow {
-    meta: {
-        duration: number;
-        fps: number;
-    };
-}
-
-export function runFFmpeg(data: Edit) {
+export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, videoId }: { videoPath: string; videoId: VideoId }) => Promise<string>) {
     const ffmpegPath = "ffmpeg";
     const timeout = 10 * 60; // 10 minutes
 
-    let startTime = Date.now();
+    let startTime = 0;
+    if (env.NODE_ENV === "development") {
+        startTime = Date.now();
+    }
 
     const duration = data.duration();
     const fps = data.fps();
 
-    // Create a custom PassThrough stream to push progress data into
-    // const progressStream = new PassThrough({ objectMode: true });
-    // Create a Readable stream to push progress data into
-    // const progressStream = new Readable({
-    //     read() {
-    //         undefined;
-    //     },
-    // });
-    const progressStream = new ReadableStream<string>({
+    const progressStream = new ReadableStream<IShowStreamData>({
         start(controller) {
+            controller.enqueue({
+                type: ShowStreamType.VIDEO_ID,
+                videoId: videoId,
+            });
+
             const command = ffmpeg({ niceness: -10, timeout: timeout, cwd: process.cwd() }).setFfmpegPath(ffmpegPath);
 
             data.getImageInputs().forEach(({ name, config, format, fps, loop }) => {
@@ -48,43 +46,48 @@ export function runFFmpeg(data: Edit) {
             command.output(data.outputName());
             command
                 .on("start", (commandLine) => {
-                    console.log("Spawned Ffmpeg with command: " + commandLine);
-                    startTime = Date.now();
+                    if (env.NODE_ENV === "development") {
+                        logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Spawned Ffmpeg with command: " + commandLine);
+                        startTime = Date.now();
+                    }
                 })
-                .on(
-                    "progress",
-                    (progress: {
-                        frames: number;
-                        currentFps: number;
-                        currentKbps: number;
-                        targetSize: number;
-                        timemark: unknown;
-                        percent: number | undefined;
-                    }) => {
-                        const frames = progress.frames;
-                        const percent = Math.round((100 * frames) / (duration * fps));
-                        const renderedDuration = (percent / 100) * duration;
-                        console.log("Processing: " + percent + "%");
+                .on("progress", ({ frames }: { frames: number }) => {
+                    const percent = Math.round((100 * frames) / (duration * fps));
+                    logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Processing: " + percent + "%");
 
-                        // Push progress data into the stream
-                        controller.enqueue(percent.toString());
-                    },
-                )
+                    // Push progress data into the stream
+                    controller.enqueue({
+                        type: ShowStreamType.PROGRESS,
+                        progress: percent,
+                    });
+                })
                 .on("end", () => {
-                    const endTime = Date.now();
-                    const duration = endTime - startTime;
-                    console.log("Processing: 100%");
-                    console.log("Execution time:", duration, "ms");
-                    console.log("Output file is: " + data.outputName());
-                    controller.enqueue("100");
-                    controller.close();
+                    if (env.NODE_ENV === "development") {
+                        const endTime = Date.now();
+                        const duration = endTime - startTime;
+                        logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, `Execution time: ${duration} ms`);
+                    }
+                    logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Output file is: " + data.outputName());
+
+                    onDone({ videoPath: data.outputName(), videoId })
+                        .then((url) => {
+                            controller.enqueue({
+                                type: ShowStreamType.VIDEO_URL,
+                                videoUrl: url,
+                            });
+                            controller.close();
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            controller.error(err);
+                        });
                 })
                 .on("error", (err) => {
                     console.log("An error occurred: " + err);
                     controller.error(err);
                 })
                 .on("codecData", function (data: { audio: string; video: string }) {
-                    console.log("Input is " + data.audio + " audio " + "with " + data.video + " video");
+                    logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Input is " + data.audio + " audio " + "with " + data.video + " video");
                 })
                 .run();
         },

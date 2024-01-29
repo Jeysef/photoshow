@@ -1,5 +1,4 @@
 import type { OutputResolution } from "@/server/video/types/enums";
-import { type FFMpegProgress } from "ffmpeg-progress-wrapper";
 import type moods from "../../moods/moods.json";
 
 export type Mood = (typeof moods)[number];
@@ -28,11 +27,11 @@ export interface IProcessInfo {
     meta: IProcessMeta;
 }
 
-export interface IStartProcessParams {
-    videoId: VideoId;
-    progress: FFMpegProgress;
-    duration: number;
-}
+// export interface IStartProcessParams {
+//     videoId: VideoId;
+//     progress: FFMpegProgress;
+//     duration: number;
+// }
 
 type Enumerate<N extends number, Acc extends number[] = []> = Acc["length"] extends N ? Acc[number] : Enumerate<N, [...Acc, Acc["length"]]>;
 
@@ -73,3 +72,22 @@ export interface ISubmitReturnProps {
 export type UserId = string;
 
 export type IMood = Mood;
+export enum ShowStreamType {
+    PROGRESS = "PROGRESS",
+    VIDEO_URL = "VIDEO_URL",
+    VIDEO_ID = "VIDEO_ID",
+}
+
+export type IShowStreamData =
+    | {
+          type: ShowStreamType.PROGRESS;
+          progress: number;
+      }
+    | {
+          type: ShowStreamType.VIDEO_URL;
+          videoUrl: string;
+      }
+    | {
+          type: ShowStreamType.VIDEO_ID;
+          videoId: string;
+      };

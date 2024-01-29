@@ -1,9 +1,9 @@
-
 export enum LoggerState {
-    SUCCESS = "\x1b[32m",// green
-    WARNING = "\x1b[33m",// yellow
-    ERROR = "\x1b[31m",// red
-    INFO = "\x1b[34m"
+    SUCCESS = "\x1b[32m", // green
+    WARNING = "\x1b[33m", // yellow
+    ERROR = "\x1b[31m", // red
+    INFO = "\x1b[34m", // blue
+    DEBUG = "\x1b[35m", // magenta
 }
 export enum LoggerEmoji {
     SUCCESS = "✅",
@@ -19,5 +19,7 @@ export enum LoggerEmoji {
     IMAGE = "🖼️",
     VIDEO = "🎥",
     AUDIO = "🎵",
-    WORK = "⚙️"
+    WORK = "⚙️",
+    EMPTY = "",
+    DEBUG = "🐛",
 }

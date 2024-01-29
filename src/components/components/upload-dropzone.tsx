@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useState, type RefObject } from "react";
-import { twMerge } from "tailwind-merge";
-
-import { allowedContentTextLabelGenerator, classNames, generateClientDropzoneAccept, generatePermittedFileTypes } from "uploadthing/client";
-
 import type { ExpandedRouteConfig } from "@uploadthing/shared";
 import { Loader2, UploadCloud } from "lucide-react";
+import { useCallback, useEffect, useState, type RefObject } from "react";
 import { useDropzone } from "react-dropzone";
 import { type UseFormReturn } from "react-hook-form";
+import { twMerge } from "tailwind-merge";
+import { allowedContentTextLabelGenerator, classNames, generateClientDropzoneAccept, generatePermittedFileTypes } from "uploadthing/client";
 import Options from "../app-composition/options/options";
 import { FormFieldNames, type FormValues } from "../pages/edit/formSchema";
 import { Button } from "./button";
@@ -18,7 +16,7 @@ import Text from "./typography/text";
 import { getFilesFromClipboardEvent } from "./upload-dropzone-shared";
 
 export type UploadDropzoneProps = {
-    // onSubmit: (files: File[]) => void;
+    onSubmit: (files: File[]) => void;
     form: UseFormReturn<FormValues>;
     formRef: RefObject<HTMLFormElement>;
     config?: {
