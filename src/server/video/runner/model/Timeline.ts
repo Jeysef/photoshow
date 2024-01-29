@@ -27,9 +27,22 @@ class Timeline {
         return new Soundtrack(this.props.timeline.soundtrack);
     };
 
-    public getOutput(): ITimelineOutput {
+    private formatOutputVideo = (prevOutputStreamLabel: string, script: string) => {
+        const outputStreamLabel = "[out]";
+        script += `${prevOutputStreamLabel}format=pix_fmts=yuv420p[out]`;
         return {
-            tracks: this.createTracks().getOutput(),
+            script: script,
+            outputStreamLabel: outputStreamLabel,
+        };
+    };
+
+    public getOutput(): ITimelineOutput {
+        const tracks = this.createTracks().getOutput();
+        const formatOutputVideo = this.formatOutputVideo(tracks.outputStreamLabel, tracks.script);
+        tracks.script = formatOutputVideo.script;
+        tracks.outputStreamLabel = formatOutputVideo.outputStreamLabel;
+        return {
+            tracks: tracks,
             output: this.props.output,
             soundtrack: this.createSoundtrack(),
         };
