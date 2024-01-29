@@ -55,6 +55,9 @@ class Tracks {
                     // the previous track will be on top of the current track
                     overlay = track.overlayBy(previousTrack);
                 }
+                if (accumulator.script && overlay.script) {
+                    overlay.script = ";" + overlay.script;
+                }
                 return {
                     script: accumulator.script + overlay.script,
                     outputStreamLabel: overlay.outputStreamLabel,
