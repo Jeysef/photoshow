@@ -1,14 +1,33 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/components/card";
 import { Label } from "@/components/components/label";
 import { Progress } from "@/components/components/progress";
+import { CurrentStateContext } from "@/components/pages/edit/page-layout";
+import { LoadingState } from "@/components/pages/edit/types";
+import { cn } from "@/lib/utils";
+import { useContext } from "react";
+import styles from "./loading-card.module.css";
 
-interface ILoadingProps {
-    videoId: string;
-    videoProgress: number;
+function VideoRenderingProgress() {
+    const { progress: videoProgress } = useContext(CurrentStateContext);
+    return (
+        <div className="grid gap-2">
+            <Label htmlFor="videoRender">Video rendering</Label>
+            <Progress id="videoRender" value={videoProgress} />
+        </div>
+    );
 }
 
-function Loading(props: ILoadingProps) {
-    const { videoId, videoProgress } = props;
+function VideoUploadingProgress() {
+    return (
+        <div className="grid gap-2">
+            <Label htmlFor="videoUpload">Video uploading</Label>
+            <Progress id="videoUpload" className={cn("[&>div]:animate-progress-indeterminate", styles.gradient)} value={100} />
+        </div>
+    );
+}
+
+function Loading() {
+    const { state, videoId } = useContext(CurrentStateContext);
 
     return (
         <Card>
@@ -16,10 +35,8 @@ function Loading(props: ILoadingProps) {
                 <CardTitle className="text-2xl">Loading video: {videoId}</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-2">
-                <div className="grid gap-2">
-                    <Label htmlFor="video">Video</Label>
-                    <Progress id="video" value={videoProgress} />
-                </div>
+                <VideoRenderingProgress />
+                {state === LoadingState.VIDEO_UPLOADING && <VideoUploadingProgress />}
             </CardContent>
         </Card>
     );

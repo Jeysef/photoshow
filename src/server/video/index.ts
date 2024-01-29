@@ -48,6 +48,6 @@ async function onDone({ videoPath, videoId }: { videoPath: string; videoId: stri
     if (error) {
         throw new Error(error.message);
     }
-    logger.log(LoggerState.SUCCESS, LoggerEmoji.UPLOAD, `Uploaded video ${videoId} to uploadthing`);
+    logger.log(LoggerState.SUCCESS, LoggerEmoji.UPLOAD, `Uploaded video ${videoId} to ${response.data.url}`);
     return response.data.url;
 }

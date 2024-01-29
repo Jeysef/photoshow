@@ -1,13 +1,11 @@
 "use client";
 import { AspectRatio } from "@/components/components/aspect-ratio";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/components/card";
+import { CurrentStateContext } from "@/components/pages/edit/page-layout";
+import { useContext } from "react";
 
-interface IVideoProps {
-    url: string;
-}
-
-function Video(props: IVideoProps) {
-    const { url } = props;
+function Video() {
+    const { videoUrl: url } = useContext(CurrentStateContext);
     return (
         <Card>
             <CardHeader className="space-y-1">

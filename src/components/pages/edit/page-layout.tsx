@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import Connecting from "../../app-composition/cards/connecting-card/connecting-card";
 import { Error } from "../../app-composition/cards/error-card/error-card";
 import InputCard from "../../app-composition/cards/input-card/input-card";
@@ -17,90 +17,22 @@ function CardContainer({ children }: { children: JSX.Element }) {
     );
 }
 
-export const CurrentStateContext = createContext<IContext>({
-    state: LoadingState.WAITING,
-    videoProgress: 0,
-    setVideoProgress: () => {
-        undefined;
-    },
-    videoId: "",
-    setVideoId: () => {
-        undefined;
-    },
-    setState: () => {
-        undefined;
-    },
-});
+export const CurrentStateContext = createContext<IContext>(undefined as unknown as IContext);
 
 function PageLayout() {
     const [state, setState] = useState<LoadingState>(LoadingState.WAITING);
-    const [videoUrl, setVideoUrl] = useState<string>("");
-    const [videoProgress, setVideoProgress] = useState<number>(0);
-    const [videoId, setVideoId] = useState<string>("");
-
-    const uploader = useUploader({});
-
-    const InputSide = () => {
-        const InputSideInside = () => {
-            switch (state) {
-                case LoadingState.WAITING:
-                case LoadingState.SUCCESS:
-                case LoadingState.ERROR:
-                    return <InputCard />;
-                case LoadingState.CONNECTING:
-                    return <Connecting />;
-                case LoadingState.LOADING:
-                    return <Loading videoId={videoId} videoProgress={videoProgress} />;
-                default:
-                    return null;
-            }
-        };
-
-        return (
-            <CardContainer>
-                <InputSideInside />
-            </CardContainer>
-        );
-    };
-
-    const VideoSide = (): JSX.Element | null => {
-        switch (state) {
-            case LoadingState.SUCCESS:
-            case LoadingState.ERROR:
-                break;
-            default:
-                return null;
-        }
-
-        const VideoSideInside = (): JSX.Element => {
-            switch (state) {
-                case LoadingState.SUCCESS:
-                    return <Video url={videoUrl} />;
-                case LoadingState.ERROR:
-                    return <Error />;
-            }
-        };
-
-        return (
-            <CardContainer>
-                <VideoSideInside />
-            </CardContainer>
-        );
-    };
-
-    useEffect(() => {
-        if (state === LoadingState.SUCCESS && videoId) {
-            setVideoUrl(`${window.location.origin}/api/video?videoId=${videoId}`);
-        }
-    }, [state, videoId]);
+    const { error, isUploading, progress, upload, videoId, videoUrl } = useUploader({
+        setState,
+    });
 
     const contextValues: IContext = {
         state,
-        setState,
-        videoProgress,
-        setVideoProgress,
+        error,
+        isUploading,
+        progress,
+        upload,
         videoId,
-        setVideoId,
+        videoUrl,
     };
 
     return (
@@ -112,3 +44,48 @@ function PageLayout() {
 }
 
 export default PageLayout;
+
+function InputSide() {
+    const { state } = useContext(CurrentStateContext);
+    const Content = () => {
+        switch (state) {
+            case LoadingState.WAITING:
+            case LoadingState.SUCCESS:
+            case LoadingState.ERROR:
+                return <InputCard />;
+            case LoadingState.CONNECTING:
+                return <Connecting />;
+            case LoadingState.VIDEO_RENDERING:
+            case LoadingState.VIDEO_UPLOADING:
+                return <Loading />;
+        }
+    };
+
+    return (
+        <CardContainer>
+            <Content />
+        </CardContainer>
+    );
+}
+
+function VideoSide() {
+    const { state } = useContext(CurrentStateContext);
+    if (state !== LoadingState.SUCCESS && state !== LoadingState.ERROR) {
+        return null;
+    }
+
+    const Content = () => {
+        switch (state) {
+            case LoadingState.SUCCESS:
+                return <Video />;
+            case LoadingState.ERROR:
+                return <Error />;
+        }
+    };
+
+    return (
+        <CardContainer>
+            <Content />
+        </CardContainer>
+    );
+}

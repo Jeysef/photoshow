@@ -9,7 +9,6 @@ const config = {
     // webpack: webpackConfig,
     experimental: {
         typedRoutes: true,
-        esmExternals: "loose",
     },
     env: {
         FLUENTFFMPEG_COV: "",

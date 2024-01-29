@@ -1,6 +1,6 @@
 import type { ExpandedRouteConfig } from "@uploadthing/shared";
-import { Loader2, UploadCloud } from "lucide-react";
-import { useCallback, useEffect, useState, type RefObject } from "react";
+import { UploadCloud } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { type UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
@@ -16,9 +16,8 @@ import Text from "./typography/text";
 import { getFilesFromClipboardEvent } from "./upload-dropzone-shared";
 
 export type UploadDropzoneProps = {
-    onSubmit: (files: File[]) => void;
+    onSubmit: (files: File[]) => Promise<void>;
     form: UseFormReturn<FormValues>;
-    formRef: RefObject<HTMLFormElement>;
     config?: {
         mode?: "auto" | "manual";
         appendOnPaste?: boolean;
@@ -27,47 +26,11 @@ export type UploadDropzoneProps = {
 };
 
 export function UploadDropzone(props: UploadDropzoneProps) {
-    // Cast back to UploadthingComponentProps<TRouter> to get the correct type
-    // since the ErrorMessage messes it up otherwise
+    const onSubmit = props.onSubmit;
+
     const { mode = "manual", appendOnPaste = false } = props.config ?? {};
 
     const [files, setFiles] = useState<File[]>([]);
-
-    const [uploadProgressState, setUploadProgress] = useState(0);
-
-    const [isUploading, setIsUploading] = useState(false);
-
-    async function startUpload(formData: FormData, formValues: FormValues) {
-        const textDecoder = new TextDecoder();
-        const consoleLogStream = new WritableStream<Uint8Array>({
-            write(chunk) {
-                console.log(textDecoder.decode(chunk));
-            },
-            close() {
-                console.log("done");
-            },
-            abort(err) {
-                console.log("err", err);
-            },
-        });
-
-        setIsUploading(true);
-        fetch("/api/image-upload?" + new URLSearchParams(formValues).toString(), {
-            method: "POST",
-            body: formData,
-            signal: new AbortController().signal,
-        })
-            .then((response) => {
-                if (!response.body) {
-                    throw new Error("The response body is empty.");
-                }
-                void response.body.pipeTo(consoleLogStream);
-            })
-            .catch((err) => {
-                console.log("err", err);
-                // handleUnexpectedError(error);
-            });
-    }
 
     const { fileTypes } = generatePermittedFileTypes(props.fileTypes);
 
@@ -76,12 +39,7 @@ export function UploadDropzone(props: UploadDropzoneProps) {
             setFiles(acceptedFiles);
             // If mode is auto, start upload immediately
             if (mode === "auto") {
-                // props.onSubmit(acceptedFiles);
-                const formData = new FormData();
-                acceptedFiles.forEach((file) => {
-                    formData.append(FormFieldNames.FILES, file);
-                });
-                void startUpload(formData, props.form.getValues());
+                void onSubmit(acceptedFiles);
             }
         },
         [props, mode],
@@ -99,12 +57,7 @@ export function UploadDropzone(props: UploadDropzoneProps) {
         e.preventDefault();
         e.stopPropagation();
         if (!files) return;
-        // props.onSubmit(files);
-        const formData = new FormData();
-        files.forEach((file) => {
-            formData.append(FormFieldNames.FILES, file);
-        });
-        void startUpload(formData, props.form.getValues());
+        void onSubmit(files);
     };
 
     useEffect(() => {
@@ -118,12 +71,7 @@ export function UploadDropzone(props: UploadDropzoneProps) {
             setFiles((prev) => [...prev, ...pastedFiles]);
 
             if (mode === "auto") {
-                // props.onSubmit(files);
-                const formData = new FormData();
-                files.forEach((file) => {
-                    formData.append(FormFieldNames.FILES, file);
-                });
-                void startUpload(formData, props.form.getValues());
+                void onSubmit(files);
             }
         };
 
@@ -135,9 +83,7 @@ export function UploadDropzone(props: UploadDropzoneProps) {
 
     const state = (() => {
         if (!ready) return "readying";
-        if (ready && !isUploading) return "ready";
-
-        return "uploading";
+        if (ready) return "ready";
     })();
 
     return (
@@ -185,28 +131,10 @@ export function UploadDropzone(props: UploadDropzoneProps) {
                         e.preventDefault(), e.stopPropagation();
                     }}
                 >
-                    <Options
-                        className="w-1/4"
-                        onSubmit={onUploadClick}
-                        form={props.form}
-                        disabled={state === "uploading"}
-                        aria-disabled={state === "uploading"}
-                    />
+                    <Options className="w-1/4" onSubmit={onUploadClick} form={props.form} />
 
-                    <Button
-                        variant={"default"}
-                        className={"w-36 overflow-hidden"}
-                        onClick={onUploadClick}
-                        data-ut-element="button"
-                        data-state={state}
-                        disabled={state === "uploading"}
-                        aria-disabled={state === "uploading"}
-                    >
-                        {state === "uploading" ? (
-                            <Loader2 className="z-10 block h-5 w-5 animate-spin align-middle text-black" />
-                        ) : (
-                            `Upload ${files.length} file${files.length === 1 ? "" : "s"}`
-                        )}
+                    <Button variant={"default"} className={"w-36 overflow-hidden"} onClick={onUploadClick} data-ut-element="button" data-state={state}>
+                        {`Upload ${files.length} file${files.length === 1 ? "" : "s"}`}
                     </Button>
                 </div>
             )}

@@ -1,8 +1,10 @@
+import type useUploader from "./uploader";
 
 export enum LoadingState {
     WAITING = "Waiting",
     CONNECTING = "Connecting",
-    LOADING = "Loading",
+    VIDEO_RENDERING = "Loading",
+    VIDEO_UPLOADING = "Uploading",
     SUCCESS = "Success",
     ERROR = "Error",
 }
@@ -12,11 +14,6 @@ export interface IVideoLoadingState {
     url?: string;
 }
 
-export interface IContext {
-    state: LoadingState
-    videoProgress: number
-    setVideoProgress: (progress: number) => void
-    videoId: string
-    setState: (state: LoadingState) => void
-    setVideoId: (id: string) => void
+export interface IContext extends ReturnType<typeof useUploader> {
+    state: LoadingState;
 }

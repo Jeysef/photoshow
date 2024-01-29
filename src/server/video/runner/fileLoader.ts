@@ -15,7 +15,7 @@ export default async function saveImages(props: { formData: FormData; videoId: V
         deleteVideoFolder(videoId);
     }
 
-    logger.log(LoggerState.INFO, LoggerEmoji.SUCCESS, "Creating directory for trip");
+    logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Creating directory for trip");
     createVideoFolder(videoId);
     const { images: imagePaths } = await writeImages(getFilesFromFormData(formData), destination);
     return { imagePaths };
@@ -90,7 +90,7 @@ export function getVideoFile(videoPath: string, videoName: string): File {
     const existVideoFile = fs.existsSync(videoPath);
     if (existVideoFile) {
         const buffer = fs.readFileSync(videoPath);
-        return new File([buffer], videoPath);
+        return new File([buffer], videoName);
     }
     throw new Error("Video file does not exist");
 }

@@ -69,6 +69,11 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, vi
                     }
                     logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Output file is: " + data.outputName());
 
+                    controller.enqueue({
+                        type: ShowStreamType.PROGRESS,
+                        progress: 100,
+                    });
+
                     onDone({ videoPath: data.outputName(), videoId })
                         .then((url) => {
                             controller.enqueue({
