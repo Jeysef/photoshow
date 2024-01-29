@@ -110,7 +110,3 @@ body {
         @apply px-4;
     }
 }
-
-* {
-    min-width: 0;
-}
