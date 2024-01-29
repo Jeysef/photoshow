@@ -1,18 +1,19 @@
-"use client";
-import Center from "@/components/center";
 import { Button } from "@/components/components/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/components/collapsible";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/components/form";
 import { Input } from "@/components/components/input";
 import { RadioGroup, RadioGroupItem } from "@/components/components/radio-group";
-import { Loader } from "@/components/loader";
+import { Skeleton } from "@/components/components/skeleton";
+import Text from "@/components/components/typography/text";
 import { OutputResolution } from "@/server/video/types/enums";
+import { api } from "@/trpc/react";
 import { OrientationType } from "@/types/types";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ChevronsUpDown } from "lucide-react";
 import { Suspense, type FC, type PropsWithChildren } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { type UseFormReturn } from "react-hook-form";
 import { FormFieldNames, type FormValues } from "../../pages/edit/formSchema";
-import { type IAudioList } from "./audio-list/audioList";
 
 interface IWithFormProps {
     form: UseFormReturn<FormValues>;
@@ -39,27 +40,38 @@ const FormItemWrapper: FC<PropsWithChildren<IFormItemWrapperProps>> = ({ childre
     </FormItem>
 );
 
-const SoundtrackItemList = ({ audioList }: { audioList: IAudioList[] }) => {
-    const list = audioList.map(({ component, name }, index) => (
-        <>
-            <FormItem key={index} className="flex items-center space-x-3 space-y-0">
-                <Suspense
-                    fallback={
-                        <Center>
-                            <Loader className="h-20 w-20" />
-                        </Center>
-                    }
-                >
+const SoundtrackPreview = ({ audioName }: { audioName: string }) => {
+    return (
+        <div className="col-span-1">
+            <span className="flex h-8 flex-shrink-0 flex-grow basis-full overflow-hidden">
+                <video src={`/api/audio/get-audio?audioName=${audioName}`} controls={true} className="h-8" style={{ aspectRatio: "100" }} />
+            </span>
+        </div>
+    );
+};
+
+const SoundtrackItemListFetched = () => {
+    const [audioList] = api.audio.getAllAudioNames.useSuspenseQuery();
+    const list = audioList.map((audioName, index) => {
+        return (
+            <>
+                <FormItem key={index} className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                        <RadioGroupItem value={name} />
+                        <RadioGroupItem value={audioName} />
                     </FormControl>
-                    <FormLabel className="font-normal">{component.description}</FormLabel>
+                    <FormLabel>
+                        <Text>{audioName}</Text>
+                    </FormLabel>
                     <FormMessage />
-                </Suspense>
-            </FormItem>
-            <div className="col-span-1">{component.preview}</div>
-        </>
-    ));
+                </FormItem>
+                <SoundtrackPreview audioName={audioName} />
+            </>
+        );
+    });
+    return list;
+};
+
+const SoundtrackItemList = () => {
     return [
         <FormItem className="col-span-2 flex items-center space-x-3 space-y-0" key={"automatic"}>
             <FormControl>
@@ -67,30 +79,62 @@ const SoundtrackItemList = ({ audioList }: { audioList: IAudioList[] }) => {
             </FormControl>
             <FormLabel className="font-normal">{"automatic"}</FormLabel>
         </FormItem>,
-        ...list,
+        <QueryErrorResetBoundary>
+            {({ reset }) => (
+                <ErrorBoundary
+                    fallbackRender={({ error, resetErrorBoundary }) => (
+                        <>
+                            <Text variant="lead">There was an error! </Text>
+                            <Button size={"sm"} onClick={() => resetErrorBoundary()}>
+                                Try again
+                            </Button>
+                            <pre className="col-span-2 whitespace-normal">{(error as Error).message}</pre>
+                        </>
+                    )}
+                    onReset={reset}
+                >
+                    <Suspense
+                        fallback={
+                            <>
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-8 w-full rounded-none" />
+                                <Skeleton className="h-4 w-32" />
+                                <Skeleton className="h-8 w-full rounded-none" />
+                                <Skeleton className="h-4 w-28" />
+                                <Skeleton className="h-8 w-full rounded-none" />
+                            </>
+                        }
+                    >
+                        <SoundtrackItemListFetched />
+                    </Suspense>
+                </ErrorBoundary>
+            )}
+        </QueryErrorResetBoundary>,
     ];
 };
 
-export const SoundtrackForm = ({ form, audioList }: IWithFormProps & { audioList: IAudioList[] }) => (
-    <FormField
-        control={form.control}
-        name={FormFieldNames.SOUNDTRACK}
-        render={({ field }) => (
-            <FormItemWrapper label="Soundtrack">
-                <FormControl>
-                    <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="grid grid-flow-row grid-cols-2 space-y-1"
-                        style={{ gridAutoColumns: "40% auto" }}
-                    >
-                        <SoundtrackItemList audioList={audioList} />
-                    </RadioGroup>
-                </FormControl>
-            </FormItemWrapper>
-        )}
-    />
-);
+export const SoundtrackForm = ({ form }: IWithFormProps) => {
+    return (
+        <FormField
+            control={form.control}
+            name={FormFieldNames.SOUNDTRACK}
+            render={({ field }) => (
+                <FormItemWrapper label="Soundtrack">
+                    <FormControl>
+                        <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="grid grid-flow-row grid-cols-2 space-y-1"
+                            style={{ gridAutoColumns: "40% auto" }}
+                        >
+                            <SoundtrackItemList />
+                        </RadioGroup>
+                    </FormControl>
+                </FormItemWrapper>
+            )}
+        />
+    );
+};
 
 export const ResolutionForm = ({ form }: IWithFormProps) => (
     <FormField

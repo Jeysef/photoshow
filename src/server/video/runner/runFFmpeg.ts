@@ -6,7 +6,7 @@ import logger from "../logger";
 import { LoggerEmoji, LoggerState } from "../logger/enums";
 import type Edit from "./Edit";
 
-export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, videoId }: { videoPath: string; videoId: VideoId }) => Promise<string>) {
+export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestination: string, videoId: VideoId) => Promise<string>, onClear: () => void) {
     const ffmpegPath = "ffmpeg";
     const timeout = 10 * 60; // 10 minutes
 
@@ -18,8 +18,10 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, vi
     const duration = data.duration();
     const fps = data.fps();
 
+    let cancelled = false;
+
     const progressStream = new ReadableStream<IShowStreamData>({
-        start(controller) {
+        start: (controller) => {
             controller.enqueue({
                 type: ShowStreamType.VIDEO_ID,
                 videoId: videoId,
@@ -27,6 +29,15 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, vi
 
             const command = ffmpeg({ niceness: -10, timeout: timeout, cwd: process.cwd() }).setFfmpegPath(ffmpegPath);
 
+            const checkCancelled = () => {
+                if (cancelled) {
+                    command.kill("SIGKILL");
+                    controller.error(new Error("Cancelled"));
+                    onClear();
+                    return true;
+                }
+                return false;
+            };
             data.getImageInputs().forEach(({ name, config, format, fps, loop }) => {
                 command.input(name);
                 if (loop === true) command.loop();
@@ -46,12 +57,15 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, vi
             command.output(data.outputName());
             command
                 .on("start", (commandLine) => {
+                    checkCancelled();
                     if (env.NODE_ENV === "development") {
                         logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Spawned Ffmpeg with command: " + commandLine);
                         startTime = Date.now();
                     }
                 })
                 .on("progress", ({ frames }: { frames: number }) => {
+                    checkCancelled();
+
                     const percent = Math.round((100 * frames) / (duration * fps));
                     logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Processing: " + percent + "%");
 
@@ -62,6 +76,7 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, vi
                     });
                 })
                 .on("end", () => {
+                    checkCancelled();
                     if (env.NODE_ENV === "development") {
                         const endTime = Date.now();
                         const duration = endTime - startTime;
@@ -74,12 +89,14 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, vi
                         progress: 100,
                     });
 
-                    onDone({ videoPath: data.outputName(), videoId })
+                    onDone(data.outputName(), videoId)
                         .then((url) => {
+                            checkCancelled();
                             controller.enqueue({
                                 type: ShowStreamType.VIDEO_URL,
                                 videoUrl: url,
                             });
+                            onClear();
                             controller.close();
                         })
                         .catch((err) => {
@@ -95,6 +112,10 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: ({ videoPath, vi
                     logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Input is " + data.audio + " audio " + "with " + data.video + " video");
                 })
                 .run();
+        },
+        cancel: (data) => {
+            console.log("🚀 ~ file: runFfmpeg.ts:100 ~ cancel ~ data:", data);
+            cancelled = true;
         },
     });
     return progressStream;

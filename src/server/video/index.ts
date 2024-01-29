@@ -1,9 +1,10 @@
-import type { ISubmitProps, VideoId } from "@/types/types";
+import type { FullVideoId, ISubmitProps, VideoId } from "@/types/types";
 import { utapi } from "../uploadthing";
 import { Configurator } from "./configurator";
 import logger from "./logger";
 import { LoggerEmoji, LoggerState } from "./logger/enums";
 import Edit from "./runner/Edit";
+import clearAfter from "./runner/clearAfter";
 import { getDestinationPath } from "./runner/destinationPath";
 import saveImages, { getVideoFile } from "./runner/fileLoader";
 import { runFFmpeg } from "./runner/runFFmpeg";
@@ -12,18 +13,18 @@ import type { IDestination } from "./types/interfaces";
 export default async function (props: ISubmitProps) {
     const { formData, config, userId } = props;
     const videoId: VideoId = crypto.randomUUID();
-    const _internalVideoId = userId + "/" + videoId;
+    const fullVideoId: FullVideoId = `${userId}/${videoId}`;
 
     try {
-        const { imagePaths } = await saveImages({ formData, videoId: _internalVideoId });
+        const { imagePaths } = await saveImages({ formData, videoId: fullVideoId });
 
-        const destination: IDestination = { name: "video", src: getDestinationPath(_internalVideoId) };
+        const destination: IDestination = { name: "video", src: getDestinationPath(fullVideoId) };
         config.soundtrack = undefined;
 
         const configuration = new Configurator({ config, images: imagePaths, destination }).construct();
         const data = new Edit(configuration);
 
-        const stream = runFFmpeg(data, videoId, onDone);
+        const stream = runFFmpeg(data, videoId, onDone, clearAfter.bind(null, fullVideoId));
         return { videoId, stream };
     } catch (err) {
         logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, `Error processing video ${videoId}`);
@@ -32,7 +33,7 @@ export default async function (props: ISubmitProps) {
     }
 }
 
-async function onDone({ videoPath, videoId }: { videoPath: string; videoId: string }) {
+async function onDone(videoPath: string, videoId: string) {
     async function uploadFiles(file: File) {
         logger.log(LoggerState.INFO, LoggerEmoji.UPLOAD, `Uploading video ${videoId} to uploadthing`);
         const response = await utapi.uploadFiles([file]);

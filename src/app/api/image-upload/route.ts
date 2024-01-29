@@ -1,12 +1,12 @@
 import video from "@/server/video";
-import { SubmitTripIdReturn, type IConfig } from "@/types/types";
+import { SubmitTripIdReturn, type IConfig, type VideoId } from "@/types/types";
 import { currentUser } from "@clerk/nextjs/server";
 import { StreamingTextResponse } from "ai";
 import { type NextRequest } from "next/server";
 
 type RouteResponse = {
     state: SubmitTripIdReturn;
-    videoId: string;
+    videoId: VideoId;
 };
 
 export const POST = async (request: NextRequest) => {

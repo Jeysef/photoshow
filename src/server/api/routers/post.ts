@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter } from "@/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
     // create: privateProcedure.input(z.object({ videoId: z.string().min(1) })).mutation(async ({ ctx, input }) => {
@@ -9,8 +9,7 @@ export const postRouter = createTRPCRouter({
     //         },
     //     });
     // }),
-
-    getAll: publicProcedure.query(({ ctx }) => {
-        return ctx.db.post.findMany();
-    }),
+    // getAll: publicProcedure.query(({ ctx }) => {
+    //     return ctx.db.post.findMany();
+    // }),
 });

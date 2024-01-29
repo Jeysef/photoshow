@@ -12,6 +12,7 @@
     "postprocessors",
     "superjson",
     "tailwindcss",
+    "tanstack",
     "TRPC",
     "typesafety",
     "uploadthing",

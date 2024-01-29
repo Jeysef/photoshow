@@ -6,7 +6,6 @@ import { Settings2 } from "lucide-react";
 import { type FC } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { type FormValues } from "../../pages/edit/formSchema";
-import audio from "./audio-list/audioList";
 import styles from "./options.module.css";
 import { OrientationForm, ResolutionForm, SoundtrackForm, TitleForm } from "./optionsItems";
 
@@ -16,7 +15,6 @@ interface IOptionsProps {
 
 export const Options: FC<Omit<ButtonProps, keyof IOptionsProps> & IOptionsProps> = (props) => {
     const { onSubmit, form, ...rest } = props;
-    const audioList = audio();
 
     return (
         <Dialog modal>
@@ -33,7 +31,7 @@ export const Options: FC<Omit<ButtonProps, keyof IOptionsProps> & IOptionsProps>
                 <ScrollArea className={cn(styles.scrollArea, "w-full")}>
                     <div className="p-4">
                         <TitleForm form={form} />
-                        <SoundtrackForm form={form} audioList={audioList} />
+                        <SoundtrackForm form={form} />
                         <ResolutionForm form={form} />
                         <OrientationForm form={form} />
                     </div>

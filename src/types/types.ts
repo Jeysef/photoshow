@@ -38,7 +38,9 @@ type Enumerate<N extends number, Acc extends number[] = []> = Acc["length"] exte
 export type Range<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>;
 export type RangeIncl<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>> | T;
 
+export type UserId = string;
 export type VideoId = string;
+export type FullVideoId = `${UserId}/${VideoId}`;
 
 export enum SubmitTripIdReturn {
     RUNNING = "RUNNING",
@@ -68,8 +70,6 @@ export interface ISubmitReturnProps {
     state: SubmitTripIdReturn;
     videoId: VideoId;
 }
-
-export type UserId = string;
 
 export type IMood = Mood;
 export enum ShowStreamType {
