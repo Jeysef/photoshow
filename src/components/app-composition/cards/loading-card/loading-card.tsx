@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/components/card";
 import { Label } from "@/components/components/label";
 import { Progress } from "@/components/components/progress";
-import { CurrentStateContext } from "@/components/pages/edit/page-layout";
+import { CurrentStateContext } from "@/components/pages/edit/pageContextProvider";
 import { LoadingState } from "@/components/pages/edit/types";
 import { cn } from "@/lib/utils";
 import { useContext } from "react";

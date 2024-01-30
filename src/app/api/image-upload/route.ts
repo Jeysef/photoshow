@@ -35,6 +35,6 @@ export const POST = async (request: NextRequest) => {
     return new StreamingTextResponse(data.stream.pipeThrough(jsonStringifyTransform));
 };
 
-// export const revalidate = true;
-// export const dynamic = "force-dynamic";
-// export const runtime = "nodejs";
+export const runtime = "nodejs";
+export const revalidate = 0;
+export const dynamic = "force-dynamic";

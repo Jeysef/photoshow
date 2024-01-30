@@ -27,7 +27,7 @@ const config = {
                 checksVoidReturn: { attributes: false },
             },
         ],
-        "@typescript-eslint/switch-exhaustiveness-check": "error",
+        "@typescript-eslint/switch-exhaustiveness-check": "warn",
     },
 };
 

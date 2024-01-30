@@ -72,7 +72,7 @@ const utapi = new UTApi();
 
 export { uploadRouter, utapi, type UploadRouter };
 
-async function auth() {
+export async function auth() {
     const userId = (await currentUser())?.id;
 
     // If you throw, the user will not be able to upload

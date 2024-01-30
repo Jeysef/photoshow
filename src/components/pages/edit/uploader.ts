@@ -8,6 +8,7 @@ import { LoadingState } from "./types";
 export interface IUploaderProps {
     api?: string;
     setState: Dispatch<SetStateAction<LoadingState>>;
+    setVideoId: (value: string | ((old: string | null) => string | null) | null) => Promise<URLSearchParams>;
 }
 export interface IUploaderUploadProps {
     formData: FormData;
@@ -19,7 +20,6 @@ export default function useUploader(props: IUploaderProps) {
     const [isUploading, setIsUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState("");
-    const [videoId, setVideoId] = useState("");
     const [videoUrl, setVideoUrl] = useState("");
 
     const jsonParseTransformer = new TransformStream<string, IShowStreamData>({
@@ -42,7 +42,7 @@ export default function useUploader(props: IUploaderProps) {
             }
             if (data.type === ShowStreamType.VIDEO_ID) {
                 props.setState(LoadingState.VIDEO_RENDERING);
-                setVideoId(data.videoId);
+                void props.setVideoId(data.videoId);
             }
             if (data.type === ShowStreamType.VIDEO_URL) {
                 setVideoUrl(data.videoUrl);
@@ -94,5 +94,5 @@ export default function useUploader(props: IUploaderProps) {
                 props.setState(LoadingState.ERROR);
             });
     };
-    return { isUploading, progress, error, videoId, videoUrl, upload };
+    return { isUploading, progress, error, videoUrl, upload };
 }

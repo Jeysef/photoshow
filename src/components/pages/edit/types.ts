@@ -1,3 +1,4 @@
+import type { VideoId } from "@/types/types";
 import type useUploader from "./uploader";
 
 export enum LoadingState {
@@ -16,4 +17,5 @@ export interface IVideoLoadingState {
 
 export interface IContext extends ReturnType<typeof useUploader> {
     state: LoadingState;
+    videoId: VideoId | null;
 }

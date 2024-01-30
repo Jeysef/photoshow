@@ -26,8 +26,6 @@ export const GET = async (request: NextRequest) => {
     }
 };
 
-export const config = {
-    api: {
-        responseLimit: false,
-    },
-};
+export const revalidate = 300;
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
