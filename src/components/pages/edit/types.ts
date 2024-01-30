@@ -15,7 +15,9 @@ export interface IVideoLoadingState {
     url?: string;
 }
 
-export interface IContext extends ReturnType<typeof useUploader> {
+export interface IContext {
     state: LoadingState;
+}
+export interface IVideoContext extends ReturnType<typeof useUploader> {
     videoId: VideoId | null;
 }

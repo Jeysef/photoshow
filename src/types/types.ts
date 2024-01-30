@@ -1,4 +1,5 @@
 import type { OutputResolution } from "@/server/video/types/enums";
+import type { UploadData } from "@/server/video/types/types";
 import type moods from "../../moods/moods.json";
 
 export type Mood = (typeof moods)[number];
@@ -75,7 +76,7 @@ export type IMood = Mood;
 export enum ShowStreamType {
     PROGRESS = "PROGRESS",
     VIDEO_URL = "VIDEO_URL",
-    VIDEO_ID = "VIDEO_ID",
+    VIDEO_RENDERING = "VIDEO_RENDERING",
 }
 
 export type IShowStreamData =
@@ -83,11 +84,9 @@ export type IShowStreamData =
           type: ShowStreamType.PROGRESS;
           progress: number;
       }
-    | {
+    | ({
           type: ShowStreamType.VIDEO_URL;
-          videoUrl: string;
-      }
+      } & UploadData)
     | {
-          type: ShowStreamType.VIDEO_ID;
-          videoId: string;
+          type: ShowStreamType.VIDEO_RENDERING;
       };

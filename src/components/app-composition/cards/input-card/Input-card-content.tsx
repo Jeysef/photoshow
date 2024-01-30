@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/components/card";
 import { Form } from "@/components/components/form";
 import { UploadDropzone } from "@/components/components/upload-dropzone";
-import { CurrentStateContext } from "@/components/pages/edit/pageContextProvider";
+import { VideoContext } from "@/components/pages/edit/pageContextProvider";
 import { useContext } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { FormFieldNames, type FormValues } from "../../../pages/edit/formSchema";
@@ -12,7 +12,7 @@ export interface IInputCardContentProps {
 
 function InputCardContent(props: IInputCardContentProps) {
     const { form } = props;
-    const context = useContext(CurrentStateContext);
+    const { upload } = useContext(VideoContext);
 
     return (
         <Card>
@@ -29,7 +29,7 @@ function InputCardContent(props: IInputCardContentProps) {
                                 files.forEach((file) => {
                                     formData.append(FormFieldNames.FILES, file);
                                 });
-                                void context.upload({
+                                void upload({
                                     formData,
                                     formValues: form.getValues(),
                                 });

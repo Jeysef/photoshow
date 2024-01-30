@@ -1,5 +1,5 @@
 "use client";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import Connecting from "../../app-composition/cards/connecting-card/connecting-card";
 import { Error } from "../../app-composition/cards/error-card/error-card";
 import InputCard from "../../app-composition/cards/input-card/input-card";
@@ -11,7 +11,8 @@ import { LoadingState } from "./types";
 
 export function InputSide() {
     const { state } = useContext(CurrentStateContext);
-    const Content = () => {
+
+    const Content = useMemo(() => {
         switch (state) {
             case LoadingState.WAITING:
             case LoadingState.SUCCESS:
@@ -23,13 +24,9 @@ export function InputSide() {
             case LoadingState.VIDEO_UPLOADING:
                 return <Loading />;
         }
-    };
+    }, [state]);
 
-    return (
-        <CardContainer>
-            <Content />
-        </CardContainer>
-    );
+    return <CardContainer>{Content}</CardContainer>;
 }
 export function VideoSide() {
     const { state } = useContext(CurrentStateContext);

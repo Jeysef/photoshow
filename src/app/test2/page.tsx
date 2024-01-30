@@ -1,28 +1,21 @@
 "use client";
 
-import { useChat } from "ai/react";
+import { Label } from "@/components/components/label";
+import { Progress } from "@/components/components/progress";
+import { useEffect, useState } from "react";
 
 export default function MyComponent() {
-    const { messages, input, handleInputChange, handleSubmit } = useChat({ api: "/api/test" });
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => setProgress((p) => p + 5), 500);
+        return () => clearInterval(timer);
+    }, []);
 
     return (
-        <div>
-            <ul>
-                {messages.map((m, index) => (
-                    <li key={index}>
-                        {m.role === "user" ? "User: " : "AI: "}
-                        {m.content}
-                    </li>
-                ))}
-            </ul>
-
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Say something...
-                    <input value={input} onChange={handleInputChange} />
-                </label>
-                <button type="submit">Send</button>
-            </form>
+        <div className="grid gap-2">
+            <Label htmlFor="videoRender">Video rendering</Label>
+            <Progress id="videoRender" value={progress} />
         </div>
     );
 }

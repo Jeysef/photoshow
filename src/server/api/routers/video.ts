@@ -1,14 +1,16 @@
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
+import { utapi } from "@/server/uploadthing";
+import logger from "@/server/video/logger";
+import { LoggerEmoji, LoggerState } from "@/server/video/logger/enums";
 import { z } from "zod";
 
 export const videoRouter = createTRPCRouter({
-    getUrlFromVideoId: privateProcedure.input(z.object({ videoId: z.string().or(z.null()) })).query(async ({ ctx, input }) => {
-        console.log("🚀 ~ file: video.ts:9 ~ getUrlFromVideoId:privateProcedure.input ~ input.videoId:", input.videoId);
-        if (!input.videoId) {
-            return null;
+    getUrlFromVideoId: privateProcedure.input(z.object({ videoId: z.string().or(z.null()) })).query(async ({ input }) => {
+        const { videoId } = input;
+        if (videoId) {
+            return (await utapi.getFileUrls(videoId))?.[0]?.url;
         }
-        // return (await utapi.getFileUrls(`${ctx.currentUserId}/${input.videoId}.mp4` satisfies FullVideoId))[0]?.url;
-        // console.log(await new UTApi().listFiles({}));
-        return "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        logger.log(LoggerState.ERROR, LoggerEmoji.UPLOAD, `Failed to get video url for ${videoId} with error`);
+        return null;
     }),
 });

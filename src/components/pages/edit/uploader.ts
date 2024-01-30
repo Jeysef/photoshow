@@ -40,12 +40,12 @@ export default function useUploader(props: IUploaderProps) {
                     props.setState(LoadingState.VIDEO_UPLOADING);
                 }
             }
-            if (data.type === ShowStreamType.VIDEO_ID) {
+            if (data.type === ShowStreamType.VIDEO_RENDERING) {
                 props.setState(LoadingState.VIDEO_RENDERING);
-                void props.setVideoId(data.videoId);
             }
             if (data.type === ShowStreamType.VIDEO_URL) {
-                setVideoUrl(data.videoUrl);
+                void props.setVideoId(data.key);
+                setVideoUrl(data.url);
                 setIsUploading(false);
                 setError("");
             }
@@ -72,7 +72,8 @@ export default function useUploader(props: IUploaderProps) {
     });
 
     const upload = async ({ formData, formValues }: IUploaderUploadProps) => {
-        props.setState(LoadingState.WAITING);
+        props.setState(LoadingState.CONNECTING);
+        await props.setVideoId(null);
         setIsUploading(true);
         fetch(api + "?" + new URLSearchParams(formValues).toString(), {
             method: "POST",

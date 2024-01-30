@@ -4,9 +4,10 @@ import { ShowStreamType, type IShowStreamData } from "@/types/types";
 import ffmpeg from "fluent-ffmpeg";
 import logger from "../logger";
 import { LoggerEmoji, LoggerState } from "../logger/enums";
+import type { UploadData } from "../types/types";
 import type Edit from "./Edit";
 
-export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestination: string, videoId: VideoId) => Promise<string>, onClear: () => void) {
+export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestination: string, videoId: VideoId) => Promise<UploadData>, onClear: () => void) {
     const ffmpegPath = "ffmpeg";
     const timeout = 10 * 60; // 10 minutes
 
@@ -23,8 +24,7 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestinatio
     const progressStream = new ReadableStream<IShowStreamData>({
         start: (controller) => {
             controller.enqueue({
-                type: ShowStreamType.VIDEO_ID,
-                videoId: videoId,
+                type: ShowStreamType.VIDEO_RENDERING,
             });
 
             const command = ffmpeg({ niceness: -10, timeout: timeout, cwd: process.cwd() }).setFfmpegPath(ffmpegPath);
@@ -90,11 +90,11 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestinatio
                     });
 
                     onDone(data.outputName(), videoId)
-                        .then((url) => {
+                        .then((uploadData) => {
                             checkCancelled();
                             controller.enqueue({
                                 type: ShowStreamType.VIDEO_URL,
-                                videoUrl: url,
+                                ...uploadData,
                             });
                             onClear();
                             controller.close();
@@ -105,7 +105,7 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestinatio
                         });
                 })
                 .on("error", (err) => {
-                    console.log("An error occurred: " + err);
+                    logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, "An error occurred: " + err);
                     controller.error(err);
                 })
                 .on("codecData", function (data: { audio: string; video: string }) {

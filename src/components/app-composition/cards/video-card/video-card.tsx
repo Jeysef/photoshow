@@ -4,7 +4,7 @@ import { Button } from "@/components/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/components/card";
 import { Skeleton } from "@/components/components/skeleton";
 import Text from "@/components/components/typography/text";
-import { CurrentStateContext } from "@/components/pages/edit/pageContextProvider";
+import { VideoContext } from "@/components/pages/edit/pageContextProvider";
 import { api } from "@/trpc/react";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { Suspense, useContext } from "react";
@@ -49,13 +49,12 @@ function Video() {
 }
 
 function VideoInner() {
-    const { videoUrl, videoId } = useContext(CurrentStateContext);
-    const [videoUrlFromVideoId] = api.video.getUrlFromVideoId.useSuspenseQuery({ videoId });
-    console.log("🚀 ~ file: video-card.tsx:48 ~ VideoInner ~ videoUrlFromVideoId:", videoUrlFromVideoId);
+    const { videoUrl, videoId } = useContext(VideoContext);
+    const [videoUrlFromVideoId] = api.video.getUrlFromVideoId.useSuspenseQuery({ videoId }, videoUrl ? { placeholderData: videoUrl } : undefined);
     return (
         <AspectRatio ratio={16 / 9} className="flex items-center">
             <video controls className="h-full w-full object-contain">
-                <source src={videoUrlFromVideoId ?? ""} type="video/mp4" />
+                <source src={videoUrl ?? videoUrlFromVideoId} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
         </AspectRatio>

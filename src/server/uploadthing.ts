@@ -68,10 +68,6 @@ const uploadRouter = {
 
 type UploadRouter = typeof uploadRouter;
 
-const utapi = new UTApi();
-
-export { uploadRouter, utapi, type UploadRouter };
-
 export async function auth() {
     const userId = (await currentUser())?.id;
 
@@ -81,3 +77,7 @@ export async function auth() {
     // Whatever is returned here is accessible in onUploadComplete as `metadata`
     return { userId };
 }
+
+const utapi = new UTApi();
+
+export { uploadRouter, utapi, type UploadRouter };
