@@ -1,5 +1,5 @@
-import { uploadRouter } from "@/server/uploadthing";
 import "@/components/styles/globals.css";
+import { uploadRouter } from "@/server/uploadthing";
 import { TRPCReactProvider } from "@/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark as clerkDarkTheme } from "@clerk/themes";
@@ -48,20 +48,20 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <ClerkProvider
-            appearance={{
-                baseTheme: clerkDarkTheme,
-                layout: {
-                    privacyPageUrl: "/privacy/login",
-                },
-                variables: {
-                    fontSize: "1.1rem",
-                    colorPrimary: "rgba(45,212,191,.9)",
-                    colorTextOnPrimaryBackground: "black",
-                },
-            }}
-        >
-            <html lang="en">
+        <html lang="en">
+            <ClerkProvider
+                appearance={{
+                    baseTheme: clerkDarkTheme,
+                    layout: {
+                        privacyPageUrl: "/privacy/login",
+                    },
+                    variables: {
+                        fontSize: "1.1rem",
+                        colorPrimary: "rgba(45,212,191,.9)",
+                        colorTextOnPrimaryBackground: "black",
+                    },
+                }}
+            >
                 <body className={cn("min-h-dvh bg-background font-sans antialiased", fontSans.variable)}>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         <UTNextSSRPlugin
@@ -76,7 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <TRPCReactProvider cookies={cookies().toString()}>{children}</TRPCReactProvider>
                     </ThemeProvider>
                 </body>
-            </html>
-        </ClerkProvider>
+            </ClerkProvider>
+        </html>
     );
 }
