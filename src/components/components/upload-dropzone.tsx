@@ -112,7 +112,7 @@ export function UploadDropzone(props: UploadDropzoneProps) {
                 <FormField
                     control={props.form.control}
                     name={FormFieldNames.FILES}
-                    render={({ field }) => (
+                    render={({ field: { value, ...field } }) => (
                         <FormItem>
                             <FormControl>
                                 <Input className="sr-only" {...field} {...getInputProps()} />
