@@ -2,7 +2,6 @@ import logger from "@/server/video/logger";
 import { LoggerEmoji, LoggerState } from "@/server/video/logger/enums";
 import { ShowStreamType, type IShowStreamData } from "@/types/types";
 import { useState, type Dispatch, type SetStateAction } from "react";
-import type { FormValues } from "./formSchema";
 import { LoadingState } from "./types";
 
 export interface IUploaderProps {
@@ -12,7 +11,6 @@ export interface IUploaderProps {
 }
 export interface IUploaderUploadProps {
     formData: FormData;
-    formValues: FormValues;
 }
 
 export default function useUploader(props: IUploaderProps) {
@@ -71,11 +69,11 @@ export default function useUploader(props: IUploaderProps) {
         },
     });
 
-    const upload = async ({ formData, formValues }: IUploaderUploadProps) => {
+    const upload = async ({ formData }: IUploaderUploadProps) => {
         props.setState(LoadingState.CONNECTING);
         await props.setVideoId(null);
         setIsUploading(true);
-        fetch(api + "?" + new URLSearchParams(formValues).toString(), {
+        fetch(api, {
             method: "POST",
             body: formData,
             // signal: new AbortController().signal,

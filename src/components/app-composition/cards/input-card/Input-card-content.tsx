@@ -26,12 +26,17 @@ function InputCardContent(props: IInputCardContentProps) {
                         <UploadDropzone
                             onSubmit={async (files) => {
                                 const formData = new FormData();
+                                const formValues = form.getValues();
                                 files.forEach((file) => {
                                     formData.append(FormFieldNames.FILES, file);
                                 });
+                                Object.keys(formValues).forEach((_key) => {
+                                    const key = _key as FormFieldNames;
+                                    const value = formValues[key];
+                                    value && formData.append(key, value);
+                                });
                                 void upload({
                                     formData,
-                                    formValues: form.getValues(),
                                 });
                             }}
                             form={form}

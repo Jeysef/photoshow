@@ -6,7 +6,7 @@ enum FormFieldNames {
     SOUNDTRACK = "soundtrack",
     RESOLUTION = "resolution",
     ORIENTATION = "orientation",
-    FILES = "file",
+    FILES = "files",
     TITLE = "title",
 }
 
