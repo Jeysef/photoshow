@@ -31,7 +31,7 @@ export default function Home() {
                             name: file.name,
                             tempo,
                             duration: audioElement.duration,
-                            manual: false,
+                            automatic: false,
                         };
 
                         await writeToJsonFile(data);

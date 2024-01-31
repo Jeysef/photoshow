@@ -43,7 +43,7 @@ export class Configurator {
             if (this.props.config.soundtrack) {
                 logger.log(LoggerState.WARNING, LoggerEmoji.WARNING, `soundtrack ${this.props.config.soundtrack} not found in moods`);
             }
-            return getRandomFromArray(moods.filter((mood) => !mood.manual));
+            return getRandomFromArray(moods.filter((mood) => mood.automatic));
         } catch (e) {
             logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, `error reading moods file: ${moodsPath}`);
             throw e;

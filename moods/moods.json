@@ -1,62 +1,62 @@
 [
   {
-    "name": "adventure-travel-128404.mp3",
+    "name": "adventure-travel.mp3",
     "tempo": 105,
     "duration": 125.753468,
-    "manual": false
+    "automatic": false
   },
   {
-    "name": "europe-travel-119948.mp3",
+    "name": "europe-travel.mp3",
     "tempo": 113,
     "duration": 60.238343,
-    "manual": false
+    "automatic": false
   },
   {
-    "name": "good-vibes-127577.mp3",
+    "name": "good-vibes.mp3",
     "tempo": 123,
     "duration": 129.306093,
-    "manual": false
+    "automatic": false
   },
   {
-    "name": "in-the-forest-ambient-acoustic-guitar-instrumental-background-music-for-videos-5718.mp3",
+    "name": "forest-instrumental.mp3",
     "tempo": 100,
     "duration": 119.112,
-    "manual": false
+    "automatic": true
   },
   {
-    "name": "in-the-forest-ambient-acoustic-guitar-instrumental-background-music-ig-version-60s-9646.mp3",
+    "name": "forest-instrumental-2.mp3",
     "tempo": 102,
     "duration": 60.238343,
-    "manual": false
+    "automatic": true
   },
   {
-    "name": "travel-to-the-city-8752.mp3",
+    "name": "travel-city.mp3",
     "tempo": 95,
     "duration": 169.351812,
-    "manual": false
+    "automatic": true
   },
   {
-    "name": "travel-vlog-110040.mp3",
+    "name": "travel-vlog.mp3",
     "tempo": 110,
     "duration": 146.259593,
-    "manual": false
+    "automatic": true
   },
   {
-    "name": "vlog-groovy-hip-hop-18304.mp3",
+    "name": "vlog-hip-hop.mp3",
     "tempo": 174,
     "duration": 142.106093,
-    "manual": false
+    "automatic": true
   },
   {
-    "name": "tension-112135.mp3",
+    "name": "tension.mp3",
     "tempo": 100,
     "duration": 117.054687,
-    "manual": true
+    "automatic": false
   },
   {
-    "name": "indian-trap-132594.mp3",
+    "name": "indian-trap.mp3",
     "tempo": 166,
     "duration": 90.044062,
-    "manual": true
+    "automatic": false
   }
 ]
