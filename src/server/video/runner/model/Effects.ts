@@ -1,7 +1,7 @@
+import { roundedSum } from "../../../../utils/utils";
 import { getScriptForXFade } from "../../functions";
 import { ConnectEffect, EffectEffect, MotionEffect, XFadeTransition, type OutputFPS } from "../../types/enums";
 import { type IMotionEffect } from "../../types/interfaces";
-import { roundedSum } from "../../utils/utils";
 import { type IClipChildrenProps } from "./Clip";
 import { type IClipModule } from "./Interface";
 

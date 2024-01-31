@@ -1,4 +1,3 @@
-import { FormFieldNames } from "@/components/pages/edit/formSchema";
 import type { FullVideoId } from "@/types/types";
 import fs from "fs-extra";
 import path from "path";
@@ -6,8 +5,8 @@ import logger from "../logger";
 import { LoggerEmoji, LoggerState } from "../logger/enums";
 import { getDestinationPath } from "./destinationPath";
 
-export default async function saveImages(props: { formData: FormData; videoId: FullVideoId }): Promise<{ imagePaths: string[] }> {
-    const { formData, videoId } = props;
+export default async function saveImages(props: { images: File[]; videoId: FullVideoId }): Promise<{ imagePaths: string[] }> {
+    const { images, videoId } = props;
     const destination = getDestinationPath(videoId);
 
     if (await folderExistsAsync(destination)) {
@@ -17,16 +16,8 @@ export default async function saveImages(props: { formData: FormData; videoId: F
 
     logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Creating directory for trip");
     createVideoFolder(videoId);
-    const { images: imagePaths } = await writeImages(getFilesFromFormData(formData), destination);
+    const { images: imagePaths } = await writeImages(images, destination);
     return { imagePaths };
-}
-
-function getFilesFromFormData(formData: FormData): File[] {
-    const files: File[] = [];
-    for (const value of formData.getAll(FormFieldNames.FILES)) {
-        files.push(value as File);
-    }
-    return files;
 }
 
 export async function writeImages(files: File[], directory: string): Promise<{ images: string[] }> {

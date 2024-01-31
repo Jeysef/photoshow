@@ -1,8 +1,8 @@
+import { roundedSub, roundedSum } from "../../../../utils/utils";
 import type RendererClip from "../../configurator/model/Clip";
 import type Output from "../../configurator/model/Output";
 import { getScriptForXFade } from "../../functions";
 import { type XFadeTransition } from "../../types/enums";
-import { roundedSub, roundedSum } from "../../utils/utils";
 import type { AssetInput } from "./Asset";
 import Clip from "./Clip";
 

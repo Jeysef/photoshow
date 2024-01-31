@@ -11,12 +11,12 @@ import type { IDestination } from "./types/interfaces";
 import { uploadFile } from "./uploader";
 
 export default async function (props: ISubmitProps) {
-    const { formData, config, userId } = props;
+    const { config, userId } = props;
     const videoId: VideoId = crypto.randomUUID();
     const fullVideoId: FullVideoId = `${userId}/${videoId}`;
 
     try {
-        const { imagePaths } = await saveImages({ formData, videoId: fullVideoId });
+        const { imagePaths } = await saveImages({ images: config.files, videoId: fullVideoId });
 
         const destination: IDestination = { name: "video", src: getDestinationPath(fullVideoId) };
         config.soundtrack = undefined;

@@ -1,3 +1,6 @@
+import type { AnyRecord } from "ts-essentials/dist/any-record";
+import { type Range, type RangeIncl } from "../types/types";
+
 type EnumType = Record<string, string | number>;
 type EnumTypeValue<T extends EnumType> = T[keyof T];
 type EnumTypeValues<T extends EnumType> = EnumTypeValue<T>[];
@@ -49,9 +52,6 @@ export function removeEmoticons(string: string): string {
     const emoticonMatcher = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
     return string.replace(emoticonMatcher, "");
 }
-
-import { type Range, type RangeIncl } from "../../../types/types";
-
 export function conceal<MIN extends number, MAX extends number>(min: number, max: number, number: number): Range<MIN, MAX> {
     return Math.min(Math.max(min, number), max - 1) as Range<MIN, MAX>;
 }
@@ -86,4 +86,8 @@ export function roundedDiv(decimalPlaces?: number, ...numbers: number[]) {
         numbers.reduce((acc, curr) => acc / curr),
         decimalPlaces,
     );
+}
+export function omit<Type extends AnyRecord, Keys extends keyof Type>(obj: Type, key: Keys): Omit<Type, Keys> {
+    const { [key]: _, ...rest } = obj;
+    return rest;
 }

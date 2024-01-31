@@ -1,5 +1,7 @@
+import type { FormFieldNames, FormValues } from "@/components/pages/edit/formSchema";
 import type { OutputResolution } from "@/server/video/types/enums";
 import type { UploadData } from "@/server/video/types/types";
+import type { MarkRequired } from "ts-essentials";
 import type moods from "../../moods/moods.json";
 
 export type Mood = (typeof moods)[number];
@@ -62,8 +64,7 @@ export interface IConfig {
 }
 
 export interface ISubmitProps {
-    formData: FormData;
-    config: IConfig;
+    config: MarkRequired<FormValues, FormFieldNames.FILES>;
     userId: UserId;
 }
 
