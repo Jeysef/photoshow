@@ -219,6 +219,7 @@ interface ISoundtrackUploadFormProps {
     field: ControllerRenderProps<FormValues, FormFieldNames.SOUNDTRACK>;
 }
 function SoundtrackUploadForm({ field: { value, ...field } }: ISoundtrackUploadFormProps) {
+    const form = useContext(FormContext);
     return (
         <>
             <FormItem className="mb-6 grid grid-cols-2 items-center space-y-0">
@@ -226,7 +227,15 @@ function SoundtrackUploadForm({ field: { value, ...field } }: ISoundtrackUploadF
                     <Text variant="p">{"Upload your soundtrack"}</Text>
                 </FormLabel>
                 <FormControl>
-                    <Input {...field} type="file" accept="audio/*" />
+                    <Input
+                        {...field}
+                        type="file"
+                        accept="audio/*"
+                        onChange={(e) => {
+                            const file = e.target.files?.item(0);
+                            file && form.setValue(FormFieldNames.SOUNDTRACK, file);
+                        }}
+                    />
                 </FormControl>
             </FormItem>
             <Separator>

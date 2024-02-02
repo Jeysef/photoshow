@@ -54,7 +54,7 @@ function VideoInner() {
     return (
         <AspectRatio ratio={16 / 9} className="flex items-center">
             <video controls className="h-full w-full object-contain">
-                <source src={videoUrl ?? videoUrlFromVideoId} type="video/mp4" />
+                <source src={videoUrlFromVideoId} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
         </AspectRatio>

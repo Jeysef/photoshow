@@ -6,12 +6,12 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { TRPCError, initTRPC } from "@trpc/server";
+import { db } from "@/server/db";
+import { auth, getAuth, type SignedInAuthObject, type SignedOutAuthObject } from "@clerk/nextjs/server";
+import { initTRPC, TRPCError, type inferAsyncReturnType } from "@trpc/server";
+import type { NextRequest } from "next/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-
-import { db } from "@/server/db";
-import { currentUser } from "@clerk/nextjs/server";
 
 /**
  * 1. CONTEXT
@@ -25,15 +25,31 @@ import { currentUser } from "@clerk/nextjs/server";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
-    const userId = (await currentUser())?.id;
+interface TRPCContext {
+    req?: NextRequest;
+    headers: Headers;
+}
 
+export const createTRPCContext = async (opts: TRPCContext) => {
+    const { req, headers } = opts;
     return {
         db,
-        currentUserId: userId,
-        ...opts,
+        headers,
+        ...(await createContextInner({ auth: req ? getAuth(req) : auth() })),
     };
 };
+
+interface AuthContext {
+    auth: SignedInAuthObject | SignedOutAuthObject;
+}
+
+export const createContextInner = async ({ auth }: AuthContext) => {
+    return {
+        auth,
+    };
+};
+
+export type Context = inferAsyncReturnType<typeof createTRPCContext>;
 
 /**
  * 2. INITIALIZATION
@@ -78,18 +94,17 @@ export const createTRPCRouter = t.router;
  */
 export const publicProcedure = t.procedure;
 
-const enforceUserIsAuth = t.middleware(({ ctx, next }) => {
-    if (!ctx.currentUserId) {
-        throw new TRPCError({
-            code: "UNAUTHORIZED",
-        });
+// check if the user is signed in, otherwise throw a UNAUTHORIZED CODE
+const isAuthed = t.middleware(({ next, ctx }) => {
+    if (!ctx.auth.userId) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
     }
-
     return next({
         ctx: {
-            currentUserId: ctx.currentUserId,
+            auth: ctx.auth,
         },
     });
 });
 
-export const privateProcedure = t.procedure.use(enforceUserIsAuth);
+// export this procedure to be used anywhere in your application
+export const protectedProcedure = t.procedure.use(isAuthed);
