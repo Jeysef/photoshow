@@ -25,6 +25,17 @@ export async function writeImages(files: File[], directory: string): Promise<{ i
 
     return { images: imagePaths };
 }
+export async function saveSoundtrack(props: { soundtrack: File; videoId: FullVideoId }): Promise<string> {
+    const { soundtrack, videoId } = props;
+    const destination = getDestinationPath(videoId);
+
+    if (!(await folderExistsAsync(destination))) {
+        logger.log(LoggerState.WARNING, LoggerEmoji.WARNING, "(Soundtrack) Directory for trip does not exist. Falling back to automatic mode.");
+        return "automatic";
+    }
+    logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Saving soundtrack");
+    return await writeFile(soundtrack, destination);
+}
 
 export async function writeFile(file: File, directory: string): Promise<string> {
     try {

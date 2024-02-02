@@ -123,7 +123,8 @@ export const SoundtrackForm = () => {
                     <FormControl>
                         <RadioGroup
                             onValueChange={field.onChange}
-                            defaultValue={typeof field.value === "string" ? field.value : "automatic"}
+                            defaultValue={field.value instanceof File ? undefined : field.value}
+                            value={field.value instanceof File ? "" : field.value}
                             className="grid grid-flow-row grid-cols-2 space-y-1"
                             style={{ gridAutoColumns: "40% auto" }}
                         >

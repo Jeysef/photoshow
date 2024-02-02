@@ -41,6 +41,7 @@ export class Configurator {
                 return moodFromConfig;
             }
             if (this.props.config.soundtrack) {
+                // TODO: calculate mood from soundtrack
                 logger.log(LoggerState.WARNING, LoggerEmoji.WARNING, `soundtrack ${this.props.config.soundtrack} not found in moods`);
             }
             return getRandomFromArray(moods.filter((mood) => mood.automatic));

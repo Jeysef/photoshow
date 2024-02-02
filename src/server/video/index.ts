@@ -5,7 +5,7 @@ import { LoggerEmoji, LoggerState } from "./logger/enums";
 import Edit from "./runner/Edit";
 import clearAfter from "./runner/clearAfter";
 import { getDestinationPath } from "./runner/destinationPath";
-import saveImages from "./runner/fileLoader";
+import saveImages, { saveSoundtrack } from "./runner/fileLoader";
 import { runFFmpeg } from "./runner/runFFmpeg";
 import type { IDestination } from "./types/interfaces";
 import { uploadFile } from "./uploader";
@@ -18,10 +18,17 @@ export default async function (props: ISubmitProps) {
     try {
         const { imagePaths } = await saveImages({ images: config.files, videoId: fullVideoId });
 
-        const destination: IDestination = { name: "video", src: getDestinationPath(fullVideoId) };
-        config.soundtrack = undefined;
+        if (config.soundtrack instanceof File) {
+            const soundtrackPath = await saveSoundtrack({ soundtrack: config.soundtrack, videoId: fullVideoId });
+            config.soundtrack = soundtrackPath;
+        }
 
-        const configuration = new Configurator({ config, images: imagePaths, destination }).construct();
+        const destination: IDestination = { name: "video", src: getDestinationPath(fullVideoId) };
+
+        type ConfigWithStringSoundtrack = typeof config & { soundtrack: string | undefined };
+        const config2 = config as ConfigWithStringSoundtrack;
+
+        const configuration = new Configurator({ config: config2, images: imagePaths, destination }).construct();
         const data = new Edit(configuration);
 
         const stream = runFFmpeg(
