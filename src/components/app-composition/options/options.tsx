@@ -3,18 +3,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { ScrollArea } from "@/components/components/scroll-area";
 import { cn } from "@/lib/utils";
 import { Settings2 } from "lucide-react";
-import { type FC } from "react";
-import { type UseFormReturn } from "react-hook-form";
-import { type FormValues } from "../../pages/edit/formSchema";
+import { useContext, type FC } from "react";
+import { FormContext } from "../cards/input-card/input-card";
 import styles from "./options.module.css";
 import { OrientationForm, ResolutionForm, SoundtrackForm, TitleForm } from "./optionsItems";
 
-interface IOptionsProps {
-    form: UseFormReturn<FormValues>;
-}
-
-export const Options: FC<Omit<ButtonProps, keyof IOptionsProps> & IOptionsProps> = (props) => {
-    const { onSubmit, form, ...rest } = props;
+export const Options: FC<ButtonProps> = (props) => {
+    const { onSubmit, ...rest } = props;
+    const form = useContext(FormContext);
 
     return (
         <Dialog modal>
@@ -30,10 +26,10 @@ export const Options: FC<Omit<ButtonProps, keyof IOptionsProps> & IOptionsProps>
                 </DialogHeader>
                 <ScrollArea className={cn(styles.scrollArea, "w-full")}>
                     <div className="p-4">
-                        <TitleForm form={form} />
-                        <SoundtrackForm form={form} />
-                        <ResolutionForm form={form} />
-                        <OrientationForm form={form} />
+                        <TitleForm />
+                        <SoundtrackForm />
+                        <ResolutionForm />
+                        <OrientationForm />
                     </div>
                 </ScrollArea>
                 <DialogFooter>

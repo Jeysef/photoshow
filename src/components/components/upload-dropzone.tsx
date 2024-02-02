@@ -1,12 +1,12 @@
 import type { ExpandedRouteConfig } from "@uploadthing/shared";
 import { UploadCloud } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { type UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { allowedContentTextLabelGenerator, classNames, generateClientDropzoneAccept, generatePermittedFileTypes } from "uploadthing/client";
+import { FormContext } from "../app-composition/cards/input-card/input-card";
 import Options from "../app-composition/options/options";
-import { FormFieldNames, type FormValues } from "../pages/edit/formSchema";
+import { FormFieldNames } from "../pages/edit/formSchema";
 import { Button } from "./button";
 import { FormControl, FormField, FormItem } from "./form";
 import { Input } from "./input";
@@ -17,7 +17,6 @@ import { getFilesFromClipboardEvent } from "./upload-dropzone-shared";
 
 export type UploadDropzoneProps = {
     onSubmit: (files: File[]) => Promise<void>;
-    form: UseFormReturn<FormValues>;
     config?: {
         mode?: "auto" | "manual";
         appendOnPaste?: boolean;
@@ -26,6 +25,7 @@ export type UploadDropzoneProps = {
 };
 
 export function UploadDropzone(props: UploadDropzoneProps) {
+    const form = useContext(FormContext);
     const onSubmit = props.onSubmit;
 
     const { mode = "manual", appendOnPaste = false } = props.config ?? {};
@@ -111,7 +111,7 @@ export function UploadDropzone(props: UploadDropzoneProps) {
                 >
                     {ready ? `Choose files or drag and drop` : `Loading...`}
                     <FormField
-                        control={props.form.control}
+                        control={form.control}
                         name={FormFieldNames.FILES}
                         render={({ field: { value, ...field } }) => (
                             <FormItem>
@@ -128,7 +128,7 @@ export function UploadDropzone(props: UploadDropzoneProps) {
             </div>
             {files.length > 0 && (
                 <div className="mx-auto mb-4 mt-4 flex w-min items-center justify-center gap-x-4">
-                    <Options className="w-1/4" onSubmit={onUploadClick} form={props.form} />
+                    <Options className="w-1/4" onSubmit={onUploadClick} />
 
                     <Button variant={"default"} className={"w-36 overflow-hidden"} onClick={onUploadClick} data-ut-element="button" data-state={state}>
                         {`Upload ${files.length} file${files.length === 1 ? "" : "s"}`}

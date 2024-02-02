@@ -11,14 +11,11 @@ import { api } from "@/trpc/react";
 import { OrientationType } from "@/types/types";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ChevronsUpDown } from "lucide-react";
-import { Suspense, type FC, type PropsWithChildren } from "react";
+import { Suspense, useContext, type FC, type PropsWithChildren } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { type ControllerRenderProps, type UseFormReturn } from "react-hook-form";
+import { type ControllerRenderProps } from "react-hook-form";
 import { FormFieldNames, type FormValues } from "../../pages/edit/formSchema";
-
-interface IWithFormProps {
-    form: UseFormReturn<FormValues>;
-}
+import { FormContext } from "../cards/input-card/input-card";
 
 interface IFormItemWrapperProps {
     label: string;
@@ -114,7 +111,8 @@ const SoundtrackItemList = () => {
     ];
 };
 
-export const SoundtrackForm = ({ form }: IWithFormProps) => {
+export const SoundtrackForm = () => {
+    const form = useContext(FormContext);
     return (
         <FormField
             control={form.control}
@@ -138,62 +136,22 @@ export const SoundtrackForm = ({ form }: IWithFormProps) => {
     );
 };
 
-export const ResolutionForm = ({ form }: IWithFormProps) => (
-    <FormField
-        control={form.control}
-        name={FormFieldNames.RESOLUTION}
-        render={({ field }) => (
-            <FormItemWrapper label="Resolution">
-                <FormControl>
-                    <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="grid grid-flow-row grid-cols-2 space-y-1"
-                        style={{ gridAutoColumns: "40% auto" }}
-                    >
-                        {Object.entries(OutputResolution).map(([name, value], index) => (
-                            <FormItem key={index} className="flex items-center space-x-3 space-y-0">
-                                <RadioGroupItem value={value} />
-                                <FormLabel className="font-normal">{name}</FormLabel>
-                                <FormMessage />
-                            </FormItem>
-                        ))}
-                    </RadioGroup>
-                </FormControl>
-            </FormItemWrapper>
-        )}
-    />
-);
-
-export const TitleForm = ({ form }: IWithFormProps) => (
-    <FormField
-        control={form.control}
-        name={FormFieldNames.TITLE}
-        render={({ field }) => (
-            <FormItemWrapper label="Title" defaultOpen={true}>
-                <FormControl>
-                    <Input type="string" {...field} />
-                </FormControl>
-            </FormItemWrapper>
-        )}
-    />
-);
-
-export const OrientationForm = ({ form }: IWithFormProps) => (
-    <FormField
-        control={form.control}
-        name={FormFieldNames.ORIENTATION}
-        render={({ field }) => (
-            <FormItemWrapper label="Orientation">
-                <FormControl>
-                    <FormItem>
+export const ResolutionForm = () => {
+    const form = useContext(FormContext);
+    return (
+        <FormField
+            control={form.control}
+            name={FormFieldNames.RESOLUTION}
+            render={({ field }) => (
+                <FormItemWrapper label="Resolution">
+                    <FormControl>
                         <RadioGroup
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                             className="grid grid-flow-row grid-cols-2 space-y-1"
-                            style={{ gridAutoColumns: "1fr 1fr" }}
+                            style={{ gridAutoColumns: "40% auto" }}
                         >
-                            {Object.entries(OrientationType).map(([name, value], index) => (
+                            {Object.entries(OutputResolution).map(([name, value], index) => (
                                 <FormItem key={index} className="flex items-center space-x-3 space-y-0">
                                     <RadioGroupItem value={value} />
                                     <FormLabel className="font-normal">{name}</FormLabel>
@@ -201,12 +159,61 @@ export const OrientationForm = ({ form }: IWithFormProps) => (
                                 </FormItem>
                             ))}
                         </RadioGroup>
-                    </FormItem>
-                </FormControl>
-            </FormItemWrapper>
-        )}
-    />
-);
+                    </FormControl>
+                </FormItemWrapper>
+            )}
+        />
+    );
+};
+
+export const TitleForm = () => {
+    const form = useContext(FormContext);
+    return (
+        <FormField
+            control={form.control}
+            name={FormFieldNames.TITLE}
+            render={({ field }) => (
+                <FormItemWrapper label="Title" defaultOpen={true}>
+                    <FormControl>
+                        <Input type="string" {...field} />
+                    </FormControl>
+                </FormItemWrapper>
+            )}
+        />
+    );
+};
+
+export const OrientationForm = () => {
+    const form = useContext(FormContext);
+    return (
+        <FormField
+            control={form.control}
+            name={FormFieldNames.ORIENTATION}
+            render={({ field }) => (
+                <FormItemWrapper label="Orientation">
+                    <FormControl>
+                        <FormItem>
+                            <RadioGroup
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                className="grid grid-flow-row grid-cols-2 space-y-1"
+                                style={{ gridAutoColumns: "1fr 1fr" }}
+                            >
+                                {Object.entries(OrientationType).map(([name, value], index) => (
+                                    <FormItem key={index} className="flex items-center space-x-3 space-y-0">
+                                        <RadioGroupItem value={value} />
+                                        <FormLabel className="font-normal">{name}</FormLabel>
+                                        <FormMessage />
+                                    </FormItem>
+                                ))}
+                            </RadioGroup>
+                        </FormItem>
+                    </FormControl>
+                </FormItemWrapper>
+            )}
+        />
+    );
+};
 
 interface ISoundtrackUploadFormProps {
     field: ControllerRenderProps<FormValues, FormFieldNames.SOUNDTRACK>;

@@ -5,15 +5,12 @@ import { UploadDropzone } from "@/components/components/upload-dropzone";
 import { VideoContext } from "@/components/pages/edit/pageContextProvider";
 import { omit } from "@/utils/utils";
 import { useContext } from "react";
-import { type UseFormReturn } from "react-hook-form";
 import type { StrictExclude } from "ts-essentials";
-import { FormFieldNames, type FormValues } from "../../../pages/edit/formSchema";
-export interface IInputCardContentProps {
-    form: UseFormReturn<FormValues>;
-}
+import { FormFieldNames } from "../../../pages/edit/formSchema";
+import { FormContext } from "./input-card";
 
-function InputCardContent(props: IInputCardContentProps) {
-    const { form } = props;
+function InputCardContent() {
+    const form = useContext(FormContext);
     const { upload } = useContext(VideoContext);
 
     return (
@@ -43,7 +40,6 @@ function InputCardContent(props: IInputCardContentProps) {
                                     formData,
                                 });
                             }}
-                            form={form}
                             fileTypes={{ image: { maxFileCount: 4, maxFileSize: "8MB", contentDisposition: "inline" } }}
                         />
                     </form>
