@@ -6,7 +6,6 @@ import { dark as clerkDarkTheme } from "@clerk/themes";
 import { NextSSRPlugin as UTNextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import "modern-normalize/modern-normalize.css";
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import { extractRouterConfig } from "uploadthing/server";
 import { biennale as fontSans } from "../components/fonts/fonts";
 import { ThemeProvider } from "../components/theme-provider";
@@ -73,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                              */
                             routerConfig={extractRouterConfig(uploadRouter)}
                         />
-                        <TRPCReactProvider cookies={cookies().toString()}>{children}</TRPCReactProvider>
+                        <TRPCReactProvider>{children}</TRPCReactProvider>
                     </ThemeProvider>
                 </body>
             </ClerkProvider>
