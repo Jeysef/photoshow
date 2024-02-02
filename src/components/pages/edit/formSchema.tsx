@@ -11,7 +11,7 @@ enum FormFieldNames {
 }
 
 const formSchema = z.object({
-    [FormFieldNames.SOUNDTRACK]: z.optional(z.string()),
+    [FormFieldNames.SOUNDTRACK]: z.optional(z.string().or(z.instanceof(File))),
     [FormFieldNames.RESOLUTION]: z.optional(z.nativeEnum(OutputResolution)),
     [FormFieldNames.ORIENTATION]: z.optional(z.nativeEnum(OrientationType)),
     [FormFieldNames.TITLE]: z.optional(z.string()),

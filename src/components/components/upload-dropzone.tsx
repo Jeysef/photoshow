@@ -87,50 +87,47 @@ export function UploadDropzone(props: UploadDropzoneProps) {
     })();
 
     return (
-        <div
-            className={twMerge(
-                "mt-2 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 text-center",
-                isDragActive && "bg-zinc-600/10",
-            )}
-            {...getRootProps()}
-            data-state={state}
-        >
-            {<UploadCloud width={48} height={48} />}
-            <Label
-                htmlFor="file-upload"
+        <>
+            <div
                 className={twMerge(
-                    classNames(
-                        "cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-zinc-600 focus-within:ring-offset-2",
-                        typographyVariants({ variant: "p", className: "font-semibold" }),
-                        ready ? "text-foreground hover:text-brand" : "text-gray-500",
-                    ),
+                    "mt-2 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-900/35 px-6 py-10 pb-4 text-center",
+                    isDragActive && "bg-zinc-600/10",
                 )}
-                data-ut-element="label"
+                {...getRootProps()}
                 data-state={state}
             >
-                {ready ? `Choose files or drag and drop` : `Loading...`}
-                <FormField
-                    control={props.form.control}
-                    name={FormFieldNames.FILES}
-                    render={({ field: { value, ...field } }) => (
-                        <FormItem>
-                            <FormControl>
-                                <Input className="sr-only" {...field} {...getInputProps()} />
-                            </FormControl>
-                        </FormItem>
+                {<UploadCloud width={48} height={48} />}
+                <Label
+                    htmlFor="file-upload"
+                    className={twMerge(
+                        classNames(
+                            "cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-zinc-600 focus-within:ring-offset-2",
+                            typographyVariants({ variant: "p", className: "font-semibold" }),
+                            ready ? "text-foreground hover:text-brand" : "text-gray-500",
+                        ),
                     )}
-                />
-            </Label>
-            <Text variant="mutedText" data-ut-element="allowed-content" data-state={state}>
-                {allowedContentTextLabelGenerator(props.fileTypes)}
-            </Text>
-            {files.length > 0 && (
-                <div
-                    className="mt-4 flex items-center justify-center gap-x-4"
-                    onClick={(e) => {
-                        e.preventDefault(), e.stopPropagation();
-                    }}
+                    data-ut-element="label"
+                    data-state={state}
                 >
+                    {ready ? `Choose files or drag and drop` : `Loading...`}
+                    <FormField
+                        control={props.form.control}
+                        name={FormFieldNames.FILES}
+                        render={({ field: { value, ...field } }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <Input className="sr-only" {...field} {...getInputProps()} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                </Label>
+                <Text variant="mutedText" data-ut-element="allowed-content" data-state={state}>
+                    {allowedContentTextLabelGenerator(props.fileTypes)}
+                </Text>
+            </div>
+            {files.length > 0 && (
+                <div className="mx-auto mb-4 mt-4 flex w-min items-center justify-center gap-x-4">
                     <Options className="w-1/4" onSubmit={onUploadClick} form={props.form} />
 
                     <Button variant={"default"} className={"w-36 overflow-hidden"} onClick={onUploadClick} data-ut-element="button" data-state={state}>
@@ -138,6 +135,6 @@ export function UploadDropzone(props: UploadDropzoneProps) {
                     </Button>
                 </div>
             )}
-        </div>
+        </>
     );
 }

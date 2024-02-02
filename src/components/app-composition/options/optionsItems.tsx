@@ -3,6 +3,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/components/form";
 import { Input } from "@/components/components/input";
 import { RadioGroup, RadioGroupItem } from "@/components/components/radio-group";
+import { Separator } from "@/components/components/separator";
 import { Skeleton } from "@/components/components/skeleton";
 import Text from "@/components/components/typography/text";
 import { OutputResolution } from "@/server/video/types/enums";
@@ -12,7 +13,7 @@ import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ChevronsUpDown } from "lucide-react";
 import { Suspense, type FC, type PropsWithChildren } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { type UseFormReturn } from "react-hook-form";
+import { type ControllerRenderProps, type UseFormReturn } from "react-hook-form";
 import { FormFieldNames, type FormValues } from "../../pages/edit/formSchema";
 
 interface IWithFormProps {
@@ -34,7 +35,7 @@ const FormItemWrapper: FC<PropsWithChildren<IFormItemWrapperProps>> = ({ childre
                     <span className="sr-only">Toggle</span>
                 </Button>
             </CollapsibleTrigger>
-            <CollapsibleContent className="m-2">{children}</CollapsibleContent>
+            <CollapsibleContent className="m-2 space-y-4">{children}</CollapsibleContent>
         </Collapsible>
         <FormMessage />
     </FormItem>
@@ -120,10 +121,11 @@ export const SoundtrackForm = ({ form }: IWithFormProps) => {
             name={FormFieldNames.SOUNDTRACK}
             render={({ field }) => (
                 <FormItemWrapper label="Soundtrack">
+                    <SoundtrackUploadForm field={field} />
                     <FormControl>
                         <RadioGroup
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            defaultValue={typeof field.value === "string" ? field.value : "automatic"}
                             className="grid grid-flow-row grid-cols-2 space-y-1"
                             style={{ gridAutoColumns: "40% auto" }}
                         >
@@ -205,3 +207,26 @@ export const OrientationForm = ({ form }: IWithFormProps) => (
         )}
     />
 );
+
+interface ISoundtrackUploadFormProps {
+    field: ControllerRenderProps<FormValues, FormFieldNames.SOUNDTRACK>;
+}
+function SoundtrackUploadForm({ field: { value, ...field } }: ISoundtrackUploadFormProps) {
+    return (
+        <>
+            <FormItem className="mb-6 grid grid-cols-2 items-center space-y-0">
+                <FormLabel>
+                    <Text variant="p">{"Upload your soundtrack"}</Text>
+                </FormLabel>
+                <FormControl>
+                    <Input {...field} type="file" accept="audio/*" />
+                </FormControl>
+            </FormItem>
+            <Separator>
+                <Text variant="mutedText" className="mx-auto flex w-fit -translate-y-1/2 bg-background px-2">
+                    {"or select from options below"}
+                </Text>
+            </Separator>
+        </>
+    );
+}

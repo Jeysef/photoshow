@@ -26,6 +26,5 @@ export const GET = async (request: NextRequest) => {
     }
 };
 
-export const revalidate = 300;
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
