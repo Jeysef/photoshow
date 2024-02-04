@@ -41,12 +41,21 @@ export class Configurator {
                 return moodFromConfig;
             }
             if (this.props.config.soundtrack) {
-                // TODO: calculate mood from soundtrack
-                logger.log(LoggerState.WARNING, LoggerEmoji.WARNING, `soundtrack ${this.props.config.soundtrack} not found in moods`);
+                if (this.props.config.soundtrack !== "automatic") {
+                    // TODO: calculate mood from soundtrack
+                    const customMood: IMood = {
+                        name: this.props.config.soundtrack,
+                        tempo: 100,
+                        duration: 60,
+                        automatic: false,
+                    };
+                    return customMood;
+                }
             }
             return getRandomFromArray(moods.filter((mood) => mood.automatic));
         } catch (e) {
-            logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, `error reading moods file: ${moodsPath}`);
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, `error reading moods file: ${moodsPath}. Error: ${e}`);
             throw e;
         }
     }

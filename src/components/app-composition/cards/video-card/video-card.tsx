@@ -50,11 +50,11 @@ function Video() {
 
 function VideoInner() {
     const { videoUrl, videoId } = useContext(VideoContext);
-    const [videoUrlFromVideoId] = api.video.getUrlFromVideoId.useSuspenseQuery({ videoId }, videoUrl ? { placeholderData: videoUrl } : undefined);
+    const [data] = api.video.getUrlFromVideoId.useSuspenseQuery({ videoId }, videoUrl ? { placeholderData: { url: videoUrl } } : {});
     return (
         <AspectRatio ratio={16 / 9} className="flex items-center">
             <video controls className="h-full w-full object-contain">
-                <source src={videoUrlFromVideoId} type="video/mp4" />
+                <source src={data.url} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
         </AspectRatio>
