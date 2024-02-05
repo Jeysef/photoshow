@@ -95,7 +95,7 @@
   },
   "packageManager": "npm@10.2.5",
   "engines": {
-    "node": "20.x",
+    "node": "18.x",
     "npm": "10.2.5"
   }
 }
