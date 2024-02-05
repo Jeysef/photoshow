@@ -1,21 +1,14 @@
 import { env } from "@/env";
 import type { VideoId } from "@/types/types";
 import { ShowStreamType, type IShowStreamData } from "@/types/types";
+import pathToFfmpeg from "ffmpeg-static";
 import ffmpeg from "fluent-ffmpeg";
-import { platform } from "os";
-import path from "path";
 import logger from "../logger";
 import { LoggerEmoji, LoggerState } from "../logger/enums";
 import type { UploadData } from "../types/types";
 import type Edit from "./Edit";
 
 export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestination: string, videoId: VideoId) => Promise<UploadData>, onClear: () => void) {
-    let ffmpegPath = "ffmpeg";
-    if (platform() === "win32") {
-        ffmpegPath = path.join(process.cwd(), "ffmpeg.exe");
-    } else {
-        ffmpegPath = path.join(process.cwd(), "ffmpeg");
-    }
     const timeout = 10 * 60; // 10 minutes
 
     let startTime = 0;
@@ -34,7 +27,8 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestinatio
                 type: ShowStreamType.VIDEO_RENDERING,
             });
 
-            const command = ffmpeg({ niceness: -10, timeout: timeout, cwd: process.cwd() }).setFfmpegPath(ffmpegPath);
+            const command = ffmpeg({ niceness: -10, timeout: timeout, cwd: process.cwd() });
+            pathToFfmpeg && command.setFfmpegPath(pathToFfmpeg);
 
             const checkCancelled = () => {
                 if (cancelled) {
