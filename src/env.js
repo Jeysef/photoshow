@@ -13,6 +13,7 @@ export const env = createEnv({
             .refine((str) => !str.includes("YOUR_MYSQL_URL_HERE"), "You forgot to change the default URL"),
         NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
         CLERK_SECRET_KEY: z.string(),
+        VERCEL_URL: z.string().url().optional().default(`http://localhost${process.env.PORT ?? 3000}`),
     },
 
     /**
