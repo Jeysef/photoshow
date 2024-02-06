@@ -1,7 +1,5 @@
-import { env } from "@/env";
-import { isServer } from "@tanstack/react-query";
 
-const url = isServer ?  env.VERCEL_URL : env.NEXT_PUBLIC_VERCEL_URL;
+const url = process.env.VERCEL_URL;
 export const siteConfig = {
     name: "Photoshow",
     url: `${url}`,
