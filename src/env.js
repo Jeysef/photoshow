@@ -48,6 +48,7 @@ export const env = createEnv({
         NEXT_PUBLIC_MOODS_FILE: process.env.NEXT_PUBLIC_MOODS_FILE,
         NEXT_PUBLIC_DIRS_DIR: process.env.NEXT_PUBLIC_DIRS_DIR,
         NEXT_PUBLIC_SOUNDTRACKS_DIR: process.env.NEXT_PUBLIC_SOUNDTRACKS_DIR,
+        VERCEL_URL: process.env.VERCEL_URL,
     },
     /**
      * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
