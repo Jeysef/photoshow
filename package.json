@@ -95,11 +95,7 @@
   },
   "packageManager": "npm@10.2.5",
   "engines": {
-<<<<<<< HEAD
     "node": "20.9.0",
-=======
-    "node": "18.x",
->>>>>>> parent of 9027122 (ffmpeg-static)
     "npm": "10.2.5"
   }
 }
