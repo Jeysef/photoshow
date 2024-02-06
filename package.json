@@ -42,7 +42,6 @@
     "clsx": "^2.1.0",
     "compare-versions": "^6.1.0",
     "execa": "^8.0.1",
-    "ffmpeg-static": "^5.2.0",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.2.0",
     "lucide-react": "^0.306.0",
@@ -96,7 +95,11 @@
   },
   "packageManager": "npm@10.2.5",
   "engines": {
+<<<<<<< HEAD
     "node": "20.9.0",
+=======
+    "node": "18.x",
+>>>>>>> parent of 9027122 (ffmpeg-static)
     "npm": "10.2.5"
   }
 }
