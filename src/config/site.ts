@@ -1,6 +1,7 @@
 import { env } from "@/env";
+import { isServer } from "@tanstack/react-query";
 
-const url = process.env.NODE_ENV === "production" ? env.VERCEL_URL : "http://localhost:3000";
+const url = isServer ?  env.VERCEL_URL : env.NEXT_PUBLIC_VERCEL_URL;
 export const siteConfig = {
     name: "Photoshow",
     url: `${url}`,
