@@ -27,16 +27,13 @@ export const metadata: Metadata = {
         title: siteConfig.name,
         description: siteConfig.description,
         siteName: siteConfig.name,
-        images: [
-            {
-                url: siteConfig.ogImage,
-                width: 1200,
-                height: 1080,
-                alt: siteConfig.name,
-            },
-        ],
+        images: siteConfig.ogImage
     },
-    icons: [{ rel: "icon", url: "/favicon.ico" }],
+    icons: {
+        icon: "/favicon.ico",
+        shortcut: "/favicon.ico",
+        apple: "/favicon.ico",
+    },
     abstract: "Create a video from your photos in seconds!",
 };
 
