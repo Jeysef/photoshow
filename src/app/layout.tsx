@@ -37,6 +37,7 @@ export const metadata: Metadata = {
         ],
     },
     icons: [{ rel: "icon", url: "/favicon.ico" }],
+    abstract: "Create a video from your photos in seconds!",
 };
 
 export const viewport: Viewport = {
