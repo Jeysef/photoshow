@@ -18,6 +18,9 @@ export interface IClipsOutput {
     assets: AssetInput[];
     script: string;
     outputStreamLabel: string;
+    /**
+     * in seconds
+     */
     duration: number;
     clipsCount: number;
 }

@@ -64,7 +64,7 @@ class Edit {
         return [
             "-map",
             `${this.tracks.outputStreamLabel}`, // put stream `video` to output
-            ...(!this.soundtrack ? [] : ["-map", `${this.tracks.clipsCount}:a`, "-shortest"]),
+            ...(!this.soundtrack ? [] : ["-map", `${this.soundtrack.label}`, "-shortest"]),
             "-y",
             "-movflags",
             "+faststart",
