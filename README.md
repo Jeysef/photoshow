@@ -35,5 +35,7 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 ## TODO
 
--   [ ] audio in/out fade
+-   [x] audio in/out fade
 -   [ ] soundtrack detect beats
+-   [ ] use bigint.js or decimal.js or big.js
+-   [ ] make title work
