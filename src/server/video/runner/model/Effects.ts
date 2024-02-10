@@ -76,7 +76,9 @@ class Effect implements IClipModule {
                 const splitLabel1 = `[effect_split${this.props.clip.index}_${index}no1_0]`;
                 const splitLabel1_1 = `[effect_split${this.props.clip.index}_${index}no1_1]`;
                 effectScript.push(`split=2${splitLabel0}${splitLabel1};`);
-                effectScript.push(`${splitLabel1}trim=start=${this.props.clip.duration.minus(effect.stream2Duration).round(Big.DP).toNumber()}${splitLabel1_1};`);
+                effectScript.push(
+                    `${splitLabel1}trim=start=${this.props.clip.duration.minus(effect.stream2Duration).round(Big.DP).toNumber()}${splitLabel1_1};`,
+                );
                 splitLabels.push(splitLabel1_1);
                 /**
                  * this stream is extended by connect duration because the extension is overlaid by xfade
@@ -153,7 +155,7 @@ class Zoom {
 
     public zoomIn = (zoomSpeed: number, zoomPosition: MotionEffect, zoomMax = 10) => {
         const speed = zoomSpeed;
-        return `${this.scaleUp},zoompan=z='min(zoom+0.001*${speed},${zoomMax})':d=${this.frames}:${this.scriptForZoomPosition(zoomPosition)}:${this.fpsScript}:${this.scaleBack}`;
+        return `zoompan=z='min(zoom+0.001*${speed},${zoomMax})':d=${this.frames}:${this.scriptForZoomPosition(zoomPosition)}:${this.fpsScript}:${this.scaleBack}`;
     };
 
     public zoomOut = (zoomSpeed: number, zoomPosition: MotionEffect, startingZoom = 1.5, zoomMin = 1.001) => {
@@ -166,7 +168,7 @@ class Zoom {
             throw new Error("zoomMin must be greater than 1");
         }
 
-        return `${this.scaleUp},zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.001*${speed}))':d=${frames}:${this.scriptForZoomPosition(zoomPosition)}:${this.fpsScript}:${this.scaleBack}`;
+        return `zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.001*${speed}))':d=${frames}:${this.scriptForZoomPosition(zoomPosition)}:${this.fpsScript}:${this.scaleBack}`;
     };
 
     private getScriptForZoomPosition(width: number, height: number) {
