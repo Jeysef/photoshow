@@ -1,4 +1,4 @@
-import { roundedSub, roundedSum } from "../../../../utils/utils";
+import Big from "big.js";
 import type RendererClip from "../../configurator/model/Clip";
 import type Output from "../../configurator/model/Output";
 import { getScriptForXFade } from "../../functions";
@@ -21,7 +21,7 @@ export interface IClipsOutput {
     /**
      * in seconds
      */
-    duration: number;
+    duration: Big;
     clipsCount: number;
 }
 
@@ -63,9 +63,12 @@ class Clips {
                 const currentClip = clip;
                 const nextClip = this.clips[index + 1];
 
-                if (clip.transition && clip.duration < 0.5) {
+                if (clip.transition && clip.duration.lt("0.5")) {
                     throw new Error(
-                        "Clip length is less than 0.5 seconds, Which is needed for the crossfade to work. Clip: " + clip.label + " Length: " + clip.duration,
+                        "Clip length is less than 0.5 seconds, Which is needed for the crossfade to work. Clip: " +
+                            clip.label +
+                            " Length: " +
+                            clip.duration.toNumber(),
                     );
                 }
 
@@ -96,11 +99,13 @@ class Clips {
                 let offset;
                 let script: string;
                 if (transition === undefined) {
-                    offset = roundedSum(undefined, clip.duration, acc.offset);
+                    // offset = roundedSum(undefined, clip.duration, acc.offset);
+                    offset = acc.offset.add(clip.duration);
                     script = acc.clipLabel + nextClip.label + "concat=n=2" + outputStreamLabel;
                 } else {
-                    offset = roundedSub(undefined, roundedSum(undefined, clip.duration, acc.offset), transitionDuration);
-                    script = acc.clipLabel + nextClip.label + getScriptForXFade(transition, transitionDuration, offset) + outputStreamLabel;
+                    // offset = roundedSub(undefined, roundedSum(undefined, clip.duration, acc.offset), transitionDuration);
+                    offset = acc.offset.add(clip.duration).sub(transitionDuration);
+                    script = acc.clipLabel + nextClip.label + getScriptForXFade(transition, transitionDuration, offset.toNumber()) + outputStreamLabel;
                 }
 
                 return {
@@ -109,12 +114,12 @@ class Clips {
                     offset: offset,
                 };
             },
-            { script: "", clipLabel: firstClip.label, offset: 0 },
+            { script: "", clipLabel: firstClip.label, offset: Big("0") },
         );
         /**
          * because I am slicing one clip before the end, I need to add the duration of the last clip
          */
-        const duration = offset + lastClip.duration;
+        const duration = offset.add(lastClip.duration);
 
         return { script, clipLabel, duration };
     };

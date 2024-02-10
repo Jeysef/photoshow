@@ -1,4 +1,4 @@
-import { roundedSum } from "../../../../utils/utils";
+import Big from "big.js";
 import { getScriptForXFade } from "../../functions";
 import { ConnectEffect, EffectEffect, MotionEffect, XFadeTransition, type OutputFPS } from "../../types/enums";
 import { type IMotionEffect } from "../../types/interfaces";
@@ -56,32 +56,32 @@ class Effect implements IClipModule {
                 effectScript.push(this.zoom.zoomOut(effect.speed, effect.type));
             }
             if (effect.type === EffectEffect.BLUR) {
-                effectScript.push(this.blur(effect.duration, effect.speed));
+                effectScript.push(this.blur(effect.duration.round(Big.DP).toNumber(), effect.speed));
             }
             if (effect.type === EffectEffect.GRAYSCALE) {
-                effectScript.push(this.grayscale(effect.duration, effect.speed));
+                effectScript.push(this.grayscale(effect.duration.round(Big.DP).toNumber(), effect.speed));
             }
             if (effect.type === ConnectEffect.SPLIT) {
-                if (roundedSum(undefined, effect.stream1Duration, effect.stream2Duration) !== this.props.clip.duration) {
+                if (!effect.stream1Duration.plus(effect.stream2Duration).eq(this.props.clip.duration)) {
                     throw new Error(
                         "Sum of split effect durations is not equal to clip duration. Stream1: " +
-                            effect.stream1Duration +
+                            effect.stream1Duration.round(Big.DP).toNumber() +
                             " Stream2: " +
-                            effect.stream2Duration +
+                            effect.stream2Duration.round(Big.DP).toNumber() +
                             " Clip duration: " +
-                            this.props.clip.duration,
+                            this.props.clip.duration.round(Big.DP).toNumber(),
                     );
                 }
                 const splitLabel0 = `[effect_split${this.props.clip.index}_${index}no0_0]`;
                 const splitLabel1 = `[effect_split${this.props.clip.index}_${index}no1_0]`;
                 const splitLabel1_1 = `[effect_split${this.props.clip.index}_${index}no1_1]`;
                 effectScript.push(`split=2${splitLabel0}${splitLabel1};`);
-                effectScript.push(`${splitLabel1}trim=start=${this.props.clip.duration - effect.stream2Duration}${splitLabel1_1};`);
+                effectScript.push(`${splitLabel1}trim=start=${this.props.clip.duration.minus(effect.stream2Duration).round(Big.DP).toNumber()}${splitLabel1_1};`);
                 splitLabels.push(splitLabel1_1);
                 /**
                  * this stream is extended by connect duration because the extension is overlaid by xfade
                  */
-                effectScript.push(`${splitLabel0}trim=end=${effect.stream1Duration + effect.connectDuration}`);
+                effectScript.push(`${splitLabel0}trim=end=${effect.stream1Duration.plus(effect.connectDuration).round(Big.DP).toNumber()}`);
             }
             if (effect.type === ConnectEffect.CONNECT) {
                 /**
@@ -95,7 +95,7 @@ class Effect implements IClipModule {
                     ";" +
                     splitLabel0_1 +
                     splitLabels.shift() +
-                    getScriptForXFade(effect.transition ?? XFadeTransition.FADE, effect.duration, effect.offset);
+                    getScriptForXFade(effect.transition ?? XFadeTransition.FADE, effect.duration.round(Big.DP).toNumber(), effect.offset);
                 effectScript.push(code);
             }
         });
@@ -136,7 +136,7 @@ class Zoom {
     private readonly fpsScript: string;
 
     constructor(private readonly props: IClipChildrenProps) {
-        this.frames = props.clip.duration * props.output.fps;
+        this.frames = props.clip.duration.times(props.output.fps).round(Big.DP).toNumber();
         const {
             output: { size, fps },
         } = props;
@@ -158,7 +158,7 @@ class Zoom {
 
     public zoomOut = (zoomSpeed: number, zoomPosition: MotionEffect, startingZoom = 1.5, zoomMin = 1.001) => {
         const speed = zoomSpeed;
-        const frames = Math.floor(this.props.clip.duration * this.fps);
+        const frames = this.props.clip.duration.times(this.fps).round(Big.DP).toNumber();
         if (startingZoom < 1) {
             throw new Error("startingZoom must be greater than 1");
         }

@@ -1,3 +1,4 @@
+import Big from "big.js";
 import { type IHtmlAsset } from "../../../types/interfaces";
 import { Asset, type AssetInput } from "../Asset";
 import type Clip from "../Clip";
@@ -17,7 +18,7 @@ export class HtmlAsset extends Asset {
         // console.log("htmlAsset", this.asset)
         // return ["", "", ...this.getDuration()];
         return {
-            duration: 0,
+            duration: Big("0"),
             name: "",
         };
     }

@@ -71,7 +71,7 @@ class Edit {
         ];
     };
 
-    duration = (): number => {
+    duration = (): Big => {
         return this.tracks.duration;
     };
 

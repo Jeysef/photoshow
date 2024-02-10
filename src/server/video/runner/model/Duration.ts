@@ -1,3 +1,4 @@
+import Big from "big.js";
 import { type OutputFPS } from "../../types/enums";
 import type Clip from "./Clip";
 import { type IClipChildrenProps } from "./Clip";
@@ -14,7 +15,7 @@ class Duration implements IClipModule {
     }
 
     addDuration = () => {
-        return `trim=duration=${this.clip.duration}`;
+        return `trim=duration=${this.clip.duration.round(Big.DP).toNumber()}`;
     };
 
     public getScript = () => {

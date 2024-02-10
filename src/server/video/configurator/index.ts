@@ -1,8 +1,9 @@
 import { env } from "@/env";
 import { OrientationType, type IConfig, type IMood } from "@/types/types";
+import Big from "big.js";
 import fs from "fs-extra";
 import path from "path";
-import { getRandomEnum, getRandomFromArray, roundToFloatingPoint } from "../../../utils/utils";
+import { getRandomEnum, getRandomFromArray } from "../../../utils/utils";
 import { getSizeFromResolution } from "../functions";
 import logger from "../logger";
 import { LoggerEmoji, LoggerState } from "../logger/enums";
@@ -18,6 +19,8 @@ import type Track from "./model/Track";
 import type { Asset } from "./model/assets/Asset";
 import type { ImageAsset } from "./model/assets/ImageAsset";
 
+Big.DP = 2;
+
 export interface IConfiguratorProps {
     images: string[];
     destination: IDestination;
@@ -26,7 +29,7 @@ export interface IConfiguratorProps {
 
 interface IClipData {
     clips: Clip[];
-    duration: number;
+    duration: Big;
 }
 
 export class Configurator {
@@ -71,7 +74,7 @@ export class Configurator {
         return soundtrack;
     };
 
-    private createClip = (props: { asset: Asset; start: number; length: number; fit: FitType; transition?: ITransition; effects?: IEffect[] }): Clip => {
+    private createClip = (props: { asset: Asset; start: Big; length: Big; fit: FitType; transition?: ITransition; effects?: IEffect[] }): Clip => {
         const clip = new Shotstack.Clip();
         clip.setAsset(props.asset).setStart(props.start).setLength(props.length).setFit(props.fit);
         if (props.transition) clip.setTransition(props.transition);
@@ -86,7 +89,7 @@ export class Configurator {
         return imageAsset;
     };
 
-    private getDurationFromMood = ({ tempo }: IMood): number => {
+    private getDurationFromMood = ({ tempo }: IMood): Big => {
         const getSkipper = (): number => {
             const randomSkippers = [
                 [3, 4, 5],
@@ -102,10 +105,10 @@ export class Configurator {
                 return getRandomFromArray(randomSkippers[0]);
             }
         };
-        return roundToFloatingPoint((60 / tempo) * getSkipper(), 2);
+        return Big(getSkipper()).times(60).div(tempo);
     };
 
-    private createEffectsForImage = (duration: number, i: number): IEffect[] => {
+    private createEffectsForImage = (duration: Big, i: number): IEffect[] => {
         const effects: IEffect[] = [];
         const speed = 0.3;
         effects.push({ type: i === 0 ? MotionEffect.ZOOM_IN_CENTER : getRandomEnum(MotionEffect), duration, speed });
@@ -129,9 +132,9 @@ export class Configurator {
                     transition: getRandomTransition(),
                     effects: this.createEffectsForImage(duration, index),
                 });
-                return { clips: [...acc.clips, clip], duration: acc.duration + duration };
+                return { clips: [...acc.clips, clip], duration: acc.duration.add(duration) };
             },
-            { clips: [] as Clip[], duration: 0 },
+            { clips: [] as Clip[], duration: Big("0") },
         );
 
         return clips;

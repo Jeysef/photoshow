@@ -1,3 +1,4 @@
+import type Big from "big.js";
 import {
     type AssetType,
     type ConnectEffect,
@@ -46,8 +47,8 @@ export interface ITrack {
 // Interface for the "clips" array
 export interface IClip {
     asset: IAsset;
-    start: number;
-    duration: number;
+    start: Big;
+    duration: Big;
     fit?: FitType;
     scale?: number; // 0-1
     position?: TextPosition;
@@ -129,24 +130,24 @@ export interface ITransition {
 
 export interface IMotionEffect {
     type: MotionEffect;
-    duration: number;
+    duration: Big;
     speed: number; // speed multiplier
 }
 export interface IEffectEffect {
     type: EffectEffect;
-    duration: number;
+    duration: Big;
     speed: number; // speed multiplier
 }
 export interface IConnectEffect {
     type: ConnectEffect.CONNECT;
-    duration: number;
+    duration: Big;
     offset: number;
     transition?: XFadeTransition;
 }
 export interface ISplitEffect {
     type: ConnectEffect.SPLIT;
-    stream1Duration: number;
-    stream2Duration: number;
+    stream1Duration: Big;
+    stream2Duration: Big;
     connectDuration: number;
 }
 

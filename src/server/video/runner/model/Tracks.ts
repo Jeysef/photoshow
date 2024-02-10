@@ -1,3 +1,4 @@
+import Big from "big.js";
 import type Output from "../../configurator/model/Output";
 import type RendererTrack from "../../configurator/model/Track";
 import Track, { type ITrackOutput } from "./Track";
@@ -80,7 +81,7 @@ class Tracks {
             outputStreamLabel: overlay.outputStreamLabel,
             tracksCount: tracks.length,
             clipsCount: tracksOutput.reduce((acc, curr) => acc + curr.clipsCount, 0),
-            duration: tracksOutput.reduce((acc, curr) => (acc > curr.duration ? acc : curr.duration), 0),
+            duration: tracksOutput.reduce((acc, curr) => (acc.gt(curr.duration) ? acc : curr.duration), Big(0)),
         };
     }
 }

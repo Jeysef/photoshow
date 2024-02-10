@@ -1,17 +1,18 @@
+import { type Big } from "big.js";
 import { FitType } from "../../types/enums";
 import { type IEffect, type ITransition } from "../../types/interfaces";
 import { type Asset } from "./assets/Asset";
 
 class Clip {
     private _asset?: Asset;
-    private _start?: number;
-    private _length?: number;
+    private _start?: Big;
+    private _length?: Big;
     fit?: FitType = FitType.CROP;
     transition?: ITransition;
     effects: IEffect[] = [];
     opacity?: number;
 
-    constructor(asset?: Asset, start?: number, length?: number) {
+    constructor(asset?: Asset, start?: Big, length?: Big) {
         this._asset = asset;
         this._start = start;
         this._length = length;
@@ -34,14 +35,14 @@ class Clip {
 
     /**
      * Sets The start position of the Clip on the timeline, in seconds.
-     * @param {Number} start The start position of the Clip on the timeline, in seconds.
+     * @param {Big} start The start position of the Clip on the timeline, in seconds.
      */
-    public setStart = (start: number) => {
+    public setStart = (start: Big) => {
         this._start = start;
         return this;
     };
 
-    get start(): number {
+    get start(): Big {
         if (this._start === undefined) {
             throw new Error("Start is undefined");
         }
@@ -50,14 +51,14 @@ class Clip {
 
     /**
      * Sets The length, in seconds, the Clip should play for.
-     * @param {Number} length The length, in seconds, the Clip should play for.
+     * @param {Big} length The length, in seconds, the Clip should play for.
      */
-    public setLength = (length: number) => {
+    public setLength = (length: Big) => {
         this._length = length;
         return this;
     };
 
-    get length(): number {
+    get length(): Big {
         if (this._length === undefined) {
             throw new Error("Length is undefined");
         }

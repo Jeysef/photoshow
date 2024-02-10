@@ -1,6 +1,7 @@
 import { env } from "@/env";
 import type { VideoId } from "@/types/types";
 import { ShowStreamType, type IShowStreamData } from "@/types/types";
+import Big from "big.js";
 import ffmpeg from "fluent-ffmpeg";
 import { platform } from "os";
 import path from "path";
@@ -73,13 +74,13 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestinatio
                 .on("progress", ({ frames }: { frames: number }) => {
                     checkCancelled();
 
-                    const percent = Math.round((100 * frames) / (duration * fps));
-                    logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Processing: " + percent + "%");
+                    const percent = Big(frames).div(duration.times(fps)).times(100);
+                    logger.log(LoggerState.DEBUG, LoggerEmoji.DEBUG, "Processing: " + percent.toString() + "%");
 
                     // Push progress data into the stream
                     controller.enqueue({
                         type: ShowStreamType.PROGRESS,
-                        progress: percent,
+                        progress: percent.round(Big.DP).toNumber(),
                     });
                 })
                 .on("end", () => {

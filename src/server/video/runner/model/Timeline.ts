@@ -1,3 +1,4 @@
+import Big from "big.js";
 import type Edit from "../../configurator/model/Edit";
 import type Output from "../../configurator/model/Output";
 import type { FFMpegLabel } from "../../types/types";
@@ -42,7 +43,7 @@ class Timeline {
         const inLabel: FFMpegLabel = `[${tracks.clipsCount}:a]`;
         const outLabel: FFMpegLabel = "[outa]";
         return {
-            script: `${inLabel}afade=in:0:d=${fadeDuration},afade=out:st=${tracks.duration - fadeDuration}:d=${fadeDuration}${outLabel}`,
+            script: `${inLabel}afade=in:0:d=${fadeDuration},afade=out:st=${tracks.duration.sub(fadeDuration).round(Big.DP).toNumber()}:d=${fadeDuration}${outLabel}`,
             outputStreamLabel: outLabel,
         };
     };

@@ -1,4 +1,5 @@
 import { getSizeFromResolution } from "@/server/video/functions";
+import Big from "big.js";
 import { TitleSize } from "../../../types/enums";
 import { type ITitleAsset } from "../../../types/interfaces";
 import { Asset, type AssetInput } from "../Asset";
@@ -46,7 +47,7 @@ export class TitleAsset extends Asset {
             y: "(h-text_h)/2",
             fadeInStart: 0,
             fadeInDuration: 1,
-            fadeOutStart: this.clip.duration - 1,
+            fadeOutStart: this.clip.duration.sub(1).round(Big.DP).toNumber(),
             fadeOutDuration: 1,
         });
     }
@@ -86,6 +87,7 @@ interface FadeTextOptions {
 }
 
 function fadeText(options: FadeTextOptions): string {
+    // TODO: I don't like the divisions are made in the string
     const { input, output, fontfile, text, fontsize, fontcolor, x, y, fadeInStart, fadeInDuration, fadeOutStart, fadeOutDuration } = options;
 
     const alpha = `if(lt(t,${fadeInStart}),0,if(lt(t,${fadeInStart + fadeInDuration}),(t-${fadeInStart})/${fadeInDuration},if(lt(t,${fadeOutStart}),1,if(lt(t,${

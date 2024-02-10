@@ -56,8 +56,8 @@ class Clip implements IClipInterface, Omit<IClip, "asset"> {
     public opacity?: number;
     public transform?: ITransform;
 
-    public start: number;
-    public duration: number;
+    public start: Big;
+    public duration: Big;
 
     private readonly childrenProps: IClipChildrenProps;
     asset: Asset;
