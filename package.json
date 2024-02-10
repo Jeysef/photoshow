@@ -38,6 +38,7 @@
     "@uploadthing/react": "^6.2.2",
     "ai": "^2.2.33",
     "axios": "^1.6.7",
+    "big.js": "^6.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "compare-versions": "^6.1.0",
