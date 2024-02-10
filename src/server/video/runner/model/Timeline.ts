@@ -39,11 +39,21 @@ class Timeline {
     };
 
     private formatOutputAudio = (tracks: ITracksOutput) => {
-        const fadeDuration = 5;
         const inLabel: FFMpegLabel = `[${tracks.clipsCount}:a]`;
+        if (!this.props.timeline.soundtrack || (!this.props.timeline.soundtrack.fadeInDuration && !this.props.timeline.soundtrack.fadeOutDuration))
+            return {
+                script: undefined,
+                outputStreamLabel: inLabel,
+            };
+        const { fadeInDuration, fadeOutDuration } = this.props.timeline.soundtrack;
+        /**
+         * the audio label is the last label in the script and because input labels are 0 based, the label of the audio is the number of clips
+         */
         const outLabel: FFMpegLabel = "[outa]";
+        const fadeInScript = fadeInDuration ? `afade=in:0:d=${fadeInDuration}` : "";
+        const fadeOutScript = fadeOutDuration ? `afade=out:st=${tracks.duration.sub(fadeOutDuration).round(Big.DP).toNumber()}:d=${fadeOutDuration}` : "";
         return {
-            script: `${inLabel}afade=in:0:d=${fadeDuration},afade=out:st=${tracks.duration.sub(fadeDuration).round(Big.DP).toNumber()}:d=${fadeDuration}${outLabel}`,
+            script: `${inLabel}${fadeInScript},${fadeOutScript}${outLabel}`,
             outputStreamLabel: outLabel,
         };
     };
@@ -52,12 +62,13 @@ class Timeline {
         const tracks = this.createTracks().getOutput();
         const formatOutputVideo = this.formatOutputVideo(tracks.outputStreamLabel, tracks.script);
         const formatOutputAudio = this.formatOutputAudio(tracks);
-        tracks.script = formatOutputVideo.script + ";" + formatOutputAudio.script;
+        const soundtrack = this.createSoundtrack(formatOutputAudio.outputStreamLabel);
+        tracks.script = formatOutputAudio.script ? formatOutputVideo.script + ";" + formatOutputAudio.script : formatOutputVideo.script;
         tracks.outputStreamLabel = formatOutputVideo.outputStreamLabel;
         return {
             tracks: tracks,
             output: this.props.output,
-            soundtrack: this.createSoundtrack(formatOutputAudio.outputStreamLabel),
+            soundtrack: soundtrack,
         };
     }
 }

@@ -67,6 +67,7 @@ export class Configurator {
         const soundtrack = new Shotstack.Soundtrack();
         const soundtrackPath = path.resolve(process.cwd(), env.NEXT_PUBLIC_SOUNDTRACKS_DIR, props.name);
         soundtrack.setSrc(soundtrackPath);
+        soundtrack.setFadeIn(2).setFadeOut(2);
         // if (props.effect) {
         //     soundtrack.setEffect(props.effect);
         // }

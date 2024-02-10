@@ -8,6 +8,8 @@ import { type VolumeEffect } from "../../types/enums";
 class Soundtrack {
     src?: string;
     effect?: VolumeEffect;
+    fadeInDuration?: number;
+    fadeOutDuration?: number;
     /**
      * Constructs a new <code>Soundtrack</code>.
      * A music or audio file in mp3 format that plays for the duration of the rendered video or the length of the audio file, which ever is shortest.
@@ -36,6 +38,16 @@ class Soundtrack {
         this.effect = effect;
         return this;
     };
+
+    setFadeIn(duration: number) {
+        this.fadeInDuration = duration;
+        return this;
+    }
+
+    setFadeOut(duration: number) {
+        this.fadeOutDuration = duration;
+        return this;
+    }
 }
 
 export default Soundtrack;
