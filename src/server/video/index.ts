@@ -16,6 +16,7 @@ export default async function (props: ISubmitProps) {
     const fullVideoId: FullVideoId = `${userId}/${videoId}`;
 
     try {
+        logger.log(LoggerState.INFO, LoggerEmoji.START, `Processing video ${videoId}`);
         const { imagePaths } = await saveImages({ images: config.files, videoId: fullVideoId });
 
         if (config.soundtrack instanceof File) {
