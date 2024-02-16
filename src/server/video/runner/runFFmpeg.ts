@@ -121,8 +121,8 @@ export function runFFmpeg(data: Edit, videoId: VideoId, onDone: (videoDestinatio
                 })
                 .run();
         },
-        cancel: (data) => {
-            console.log("🚀 ~ file: runFfmpeg.ts:100 ~ cancel ~ data:", data);
+        cancel: (reason) => {
+            logger.log(LoggerState.ERROR, LoggerEmoji.ERROR, "Cancelled: " + reason);
             cancelled = true;
         },
     });
