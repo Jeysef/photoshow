@@ -3,7 +3,7 @@ import { OrientationType, type IConfig, type IMood } from "@/types/types";
 import Big from "big.js";
 import fs from "fs-extra";
 import path from "path";
-import { getRandomEnum, getRandomFromArray } from "../../../utils/utils";
+import { getRandomEnumStartingWith, getRandomFromArray } from "../../../utils/utils";
 import { getSizeFromResolution } from "../functions";
 import logger from "../logger";
 import { LoggerEmoji, LoggerState } from "../logger/enums";
@@ -112,7 +112,7 @@ export class Configurator {
     private createEffectsForImage = (duration: Big, i: number): IEffect[] => {
         const effects: IEffect[] = [];
         const speed = 0.3;
-        effects.push({ type: i === 0 ? MotionEffect.ZOOM_IN_CENTER : getRandomEnum(MotionEffect), duration, speed });
+        effects.push({ type: i === 0 ? MotionEffect.ZOOM_IN_CENTER : getRandomEnumStartingWith(MotionEffect, "ZOOM_IN"), duration, speed });
         return effects;
     };
 

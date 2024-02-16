@@ -12,6 +12,12 @@ export const getRandomEnum = <T extends EnumType>(anEnum: T, except?: EnumTypeVa
     return enumValues[randomIndex]!;
 };
 
+export const getRandomEnumStartingWith = <T extends EnumType>(anEnum: T, start: EnumType[keyof EnumType]): EnumTypeValue<T> => {
+    const enumValues = getEnumValues(anEnum).filter((value) => value.toString().startsWith(start.toString()));
+    const randomIndex = getRandomArrayIndex(enumValues);
+    return enumValues[randomIndex]!;
+};
+
 export function getRandomArrayIndex<T>(array: T[]): number {
     return getRandomNumber(0, array.length);
 }

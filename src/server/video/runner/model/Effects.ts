@@ -146,19 +146,21 @@ class Zoom {
         this.width = width;
         this.height = height;
         this.fps = fps;
-        this.scriptForZoomPosition = this.getScriptForZoomPosition(width, height);
+        this.scriptForZoomPosition = this.getScriptForZoomPosition();
         const scaleUpMultiplier = 10;
         this.scaleUp = `scale=${width * scaleUpMultiplier}:${height * scaleUpMultiplier}`;
         this.scaleBack = `s=${width}x${height}`;
         this.fpsScript = `fps=${this.fps}`;
     }
 
-    public zoomIn = (zoomSpeed: number, zoomPosition: MotionEffect, zoomMax = 10) => {
+    public zoomIn = (zoomSpeed: number, zoomPosition: MotionEffect, zoomMax = 1.5) => {
+        const position = this.scriptForZoomPosition(zoomPosition);
+        const positionScript = position ? `:${position}` : "";
         const speed = zoomSpeed;
-        return `zoompan=z='min(zoom+0.001*${speed},${zoomMax})':d=${this.frames}:${this.scriptForZoomPosition(zoomPosition)}:${this.fpsScript}:${this.scaleBack}`;
+        return `${this.scaleUp},zoompan=z='min(zoom+0.0015*${speed},${zoomMax})':d=${this.frames}${positionScript}:${this.fpsScript}:${this.scaleBack}`;
     };
 
-    public zoomOut = (zoomSpeed: number, zoomPosition: MotionEffect, startingZoom = 1.5, zoomMin = 1.001) => {
+    public zoomOut = (zoomSpeed: number, zoomPosition: MotionEffect, startingZoom = 1.2, zoomMin = 1.001) => {
         const speed = zoomSpeed;
         const frames = this.props.clip.duration.times(this.fps).round(Big.DP).toNumber();
         if (startingZoom < 1) {
@@ -168,27 +170,35 @@ class Zoom {
             throw new Error("zoomMin must be greater than 1");
         }
 
-        return `zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.001*${speed}))':d=${frames}:${this.scriptForZoomPosition(zoomPosition)}:${this.fpsScript}:${this.scaleBack}`;
+        const position = this.scriptForZoomPosition(zoomPosition);
+        const positionScript = position ? `:${position}` : "";
+        return `${this.scaleUp},zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.0015*${speed}))':d=${frames}${positionScript}:${this.fpsScript}:${this.scaleBack}`;
     };
 
-    private getScriptForZoomPosition(width: number, height: number) {
+    private getScriptForZoomPosition() {
         return (zoomPosition: MotionEffect) => {
             switch (zoomPosition) {
                 case MotionEffect.ZOOM_IN_TOP_LEFT:
                 case MotionEffect.ZOOM_OUT_TOP_LEFT:
-                    return `x='${width}-(iw/zoom/2)':y='-${height}-(ih/zoom/2)'`;
+                    return "";
                 case MotionEffect.ZOOM_IN_TOP_RIGHT:
                 case MotionEffect.ZOOM_OUT_TOP_RIGHT:
-                    return `x='iw/2':y='-${height}-(ih/zoom/2)'`;
+                    return "x='iw/zoom-(iw/zoom/2)'";
                 case MotionEffect.ZOOM_IN_BOTTOM_LEFT:
                 case MotionEffect.ZOOM_OUT_BOTTOM_LEFT:
-                    return `x='${width}-(iw/zoom/2)':y='${height}+(ih/zoom/2)'`;
+                    return "y='ih-ih/zoom'";
                 case MotionEffect.ZOOM_IN_BOTTOM_RIGHT:
                 case MotionEffect.ZOOM_OUT_BOTTOM_RIGHT:
-                    return `x='iw/2':y='(ih/zoom/2)'`;
+                    return "x='iw-iw/zoom':y='ih-ih/zoom'";
                 case MotionEffect.ZOOM_IN_CENTER:
                 case MotionEffect.ZOOM_OUT_CENTER:
                     return `x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'`;
+                case MotionEffect.ZOOM_IN_TOP_CENTER:
+                case MotionEffect.ZOOM_OUT_TOP_CENTER:
+                    return `x='iw/2-(iw/zoom/2)'`;
+                case MotionEffect.ZOOM_IN_BOTTOM_CENTER:
+                case MotionEffect.ZOOM_OUT_BOTTOM_CENTER:
+                    return "x='iw/2-(iw/zoom/2)':y='ih-ih/zoom'";
             }
         };
     }
