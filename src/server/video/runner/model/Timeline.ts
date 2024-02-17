@@ -1,6 +1,7 @@
 import Big from "big.js";
 import type Edit from "../../configurator/model/Edit";
 import type Output from "../../configurator/model/Output";
+import { fadeText } from "../../functions";
 import type { StreamLabel } from "../../types/types";
 import { Soundtrack } from "./Soundtrack";
 import type { ITracksOutput } from "./Tracks";
@@ -29,9 +30,29 @@ class Timeline {
         return new Soundtrack(label, this.props.timeline.soundtrack);
     };
 
+    private titleScript = () => {
+        const title = this.props.timeline.title;
+        if (!title) return "";
+        const script = fadeText({
+            // fontfile: "assets/fonts/biennale_regular.otf",
+            fontfile: "assets/fonts/Roboto-Medium.ttf",
+            text: title.replace(/ /g, "\u00A0"),
+            fontsize: 48,
+            fontcolor: "#ffffff",
+            x: "(w-text_w)/2",
+            y: "(h-text_h)/2",
+            fadeInStart: 0,
+            fadeInDuration: 1,
+            fadeOutStart: 5,
+            fadeOutDuration: 1,
+        });
+        return `format=yuv444p,${script},format=yuv420p`;
+    };
+
     private formatOutputVideo = (prevOutputStreamLabel: string, script: string) => {
         const outputStreamLabel: StreamLabel = "[out]";
-        script += `${prevOutputStreamLabel}format=pix_fmts=yuv420p[out]`;
+        const title = this.titleScript();
+        script += `${prevOutputStreamLabel}${title}${outputStreamLabel}`;
         return {
             script: script,
             outputStreamLabel: outputStreamLabel,

@@ -7,7 +7,7 @@ import { getRandomEnumStartingWith, getRandomFromArray } from "../../../utils/ut
 import { getSizeFromResolution } from "../functions";
 import logger from "../logger";
 import { LoggerEmoji, LoggerState } from "../logger/enums";
-import { FitType, MotionEffect, OutputResolution, TitleSize, smoothTransitions, type OutputFormat, type XFadeTransition } from "../types/enums";
+import { FitType, MotionEffect, OutputResolution, smoothTransitions, type OutputFormat, type XFadeTransition } from "../types/enums";
 import { type IDestination, type IEffect, type ISize, type ITitleAsset, type ITransition } from "../types/interfaces";
 import Shotstack from "./model";
 import type Clip from "./model/Clip";
@@ -168,11 +168,12 @@ export class Configurator {
         return output;
     };
 
-    private createTimeline = (props: { tracks: Track[]; soundtrack?: Soundtrack; background?: string }): Timeline => {
+    private createTimeline = (props: { tracks: Track[]; soundtrack?: Soundtrack; background?: string; title?: string }): Timeline => {
         const timeline = new Shotstack.Timeline();
         timeline.setTracks(props.tracks);
         if (props.background) timeline.setBackground(props.background);
         if (props.soundtrack) timeline.setSoundtrack(props.soundtrack);
+        if (props.title) timeline.setTitle(props.title);
         return timeline;
     };
 
@@ -187,29 +188,10 @@ export class Configurator {
         const clips = this.createImageClips(mood);
         const resolution = this.props.config.resolution ?? OutputResolution.FULL_HD;
         const size = getSizeFromResolution(resolution, this.props.config.orientation === OrientationType.PORTRAIT);
-        const clips2: Clip[] = [];
-
-        if (this.props.config.title) {
-            clips2.push(
-                this.createClip({
-                    asset: this.createTitleAsset({
-                        text: this.props.config.title,
-                        size: TitleSize.LARGE,
-                        color: "white",
-                        // background: "#00000000",
-                    }),
-                    start: Big(0),
-                    length: Big(5),
-                    fit: FitType.CROP,
-                }),
-            );
-        }
 
         const soundtrack = this.addSoundtrack(mood);
-        const tracks = clips2.length
-            ? [this.createTrack({ clips: clips.clips }), this.createTrack({ clips: clips2 })]
-            : [this.createTrack({ clips: clips.clips })];
-        const timeline = this.createTimeline({ tracks, soundtrack });
+        const tracks = [this.createTrack({ clips: clips.clips })];
+        const timeline = this.createTimeline({ tracks, soundtrack, title: this.props.config.title });
 
         const output = this.createOutput({
             size: size,

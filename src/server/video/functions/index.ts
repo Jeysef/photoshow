@@ -43,6 +43,44 @@ export const getText = (text: string, font: string, size: number | string, color
     return `drawtext=fontfile=${font}:text=${text}:fontsize=${size}:fontcolor=${color}:box=1:boxcolor=${background}:boxborderw=5:x=${position}:y=${position}:x=${offset}:y=${offset}`;
 };
 
+interface FadeTextOptions {
+    fontfile: string;
+    text: string;
+    fontsize: number;
+    fontcolor: string;
+    x: string;
+    y: string;
+    fadeInStart: number;
+    fadeInDuration: number;
+    fadeOutStart: number;
+    fadeOutDuration: number;
+}
+
+export function fadeText(options: FadeTextOptions): string {
+    const { fontfile, text, fontsize, fontcolor, x, y, fadeInStart, fadeInDuration, fadeOutStart, fadeOutDuration } = options;
+
+    /**
+     * The alpha value used for fading in and out.
+     *
+     * @remarks
+     * The alpha value is calculated based on the current time (`t`) and the specified fade-in and fade-out parameters.
+     *
+     * @param t - The current time.
+     * @param fadeInStart - The start time of the fade-in effect.
+     * @param fadeInDuration - The duration of the fade-in effect.
+     * @param fadeOutStart - The start time of the fade-out effect.
+     * @param fadeOutDuration - The duration of the fade-out effect.
+     *
+     * @returns The alpha value at the given time.
+     */
+    const alpha = `if(lt(t,${fadeInStart}),0,if(lt(t,${fadeInStart + fadeInDuration}),(t-${fadeInStart})/${fadeInDuration},if(lt(t,${fadeOutStart}),1,if(lt(t,${
+        fadeOutStart + fadeOutDuration
+    }),(1-(t-${fadeOutStart})/${fadeOutDuration}),0))))`;
+    const enable = `between(t,${fadeInStart},${fadeInStart + fadeInDuration + fadeOutDuration})`;
+
+    return `drawtext=enable='${enable}':fontfile=${fontfile}:text='${text}':fontsize=${fontsize}:fontcolor=${fontcolor}:alpha='${alpha}':x=${x}:y=${y}`;
+}
+
 interface IOverlayProps {
     /** @example [stream_1] */
     mainStream: StreamLabel;

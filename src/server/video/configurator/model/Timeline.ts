@@ -4,6 +4,7 @@ class Timeline {
     private _tracks?: Track[];
     background?: string;
     soundtrack?: Soundtrack;
+    title?: string;
 
     constructor(tracks?: Track[]) {
         this._tracks = tracks;
@@ -41,6 +42,11 @@ class Timeline {
         }
         return this._tracks;
     }
+
+    public setTitle = (title: string) => {
+        this.title = title;
+        return this;
+    };
 }
 
 export default Timeline;
