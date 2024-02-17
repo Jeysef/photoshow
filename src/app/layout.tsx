@@ -27,7 +27,7 @@ export const metadata: Metadata = {
         title: siteConfig.name,
         description: siteConfig.description,
         siteName: siteConfig.name,
-        images: siteConfig.ogImage
+        images: siteConfig.ogImage,
     },
     icons: {
         icon: "/favicon.ico",
@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     },
                 }}
             >
-                <body className={cn("min-h-dvh bg-background font-sans antialiased", fontSans.variable)}>
+                <body className={cn("h-svh bg-background font-sans antialiased", fontSans.variable)}>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         <UTNextSSRPlugin
                             /**
