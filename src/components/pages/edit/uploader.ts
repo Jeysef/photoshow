@@ -23,7 +23,11 @@ export default function useUploader(props: IUploaderProps) {
     const jsonParseTransformer = new TransformStream<string, IShowStreamData>({
         transform(chunk, controller) {
             try {
-                controller.enqueue(JSON.parse(chunk) as IShowStreamData);
+                // split the chunk into multiple JSON objects
+                // '{}{}{}' -> [{},{},{}]
+                const splitRegex = /(?<=})/g;
+                const chunks = chunk.split(splitRegex);
+                chunks.forEach((chunk) => controller.enqueue(JSON.parse(chunk) as IShowStreamData));
             } catch (err) {
                 controller.error(err);
             } finally {
