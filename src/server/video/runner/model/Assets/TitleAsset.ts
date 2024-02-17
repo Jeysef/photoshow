@@ -1,4 +1,3 @@
-import { getSizeFromResolution } from "@/server/video/functions";
 import Big from "big.js";
 import { TitleSize } from "../../../types/enums";
 import { type ITitleAsset } from "../../../types/interfaces";
@@ -15,7 +14,7 @@ export class TitleAsset extends Asset {
         super(props, asset);
         this.clip = props;
         this.asset = asset;
-        this.size = getSizeFromResolution(this.clip.props.output.resolution);
+        this.size = this.clip.props.output.size;
     }
 
     getInput(): AssetInput {
@@ -88,11 +87,11 @@ interface FadeTextOptions {
 
 function fadeText(options: FadeTextOptions): string {
     // TODO: I don't like the divisions are made in the string
-    const { input, output, fontfile, text, fontsize, fontcolor, x, y, fadeInStart, fadeInDuration, fadeOutStart, fadeOutDuration } = options;
+    const { fontfile, text, fontsize, fontcolor, x, y, fadeInStart, fadeInDuration, fadeOutStart, fadeOutDuration } = options;
 
     const alpha = `if(lt(t,${fadeInStart}),0,if(lt(t,${fadeInStart + fadeInDuration}),(t-${fadeInStart})/${fadeInDuration},if(lt(t,${fadeOutStart}),1,if(lt(t,${
         fadeOutStart + fadeOutDuration
     }),(1-(t-${fadeOutStart})/${fadeOutDuration}),0))))`;
 
-    return `${input}drawtext=fontfile=${fontfile}:text='${text}':fontsize=${fontsize}:fontcolor=${fontcolor}:alpha='${alpha}':x=${x}:y=${y}${output}`;
+    return `drawtext=fontfile=${fontfile}:text='${text}':fontsize=${fontsize}:fontcolor=${fontcolor}:alpha='${alpha}':x=${x}:y=${y}`;
 }

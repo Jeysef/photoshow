@@ -3,6 +3,7 @@ import type RendererClip from "../../configurator/model/Clip";
 import type Output from "../../configurator/model/Output";
 import { getScriptForXFade } from "../../functions";
 import { type XFadeTransition } from "../../types/enums";
+import type { StreamLabel } from "../../types/types";
 import type { AssetInput } from "./Asset";
 import Clip from "./Clip";
 
@@ -17,7 +18,7 @@ export interface IClipsProps {
 export interface IClipsOutput {
     assets: AssetInput[];
     script: string;
-    outputStreamLabel: string;
+    outputStreamLabel: StreamLabel;
     /**
      * in seconds
      */
@@ -76,7 +77,7 @@ class Clips {
                     throw new Error("nextClip is undefined");
                 }
 
-                const outputStreamLabel = `[stream_C${index}_with_C${index + 1}]`;
+                const outputStreamLabel: StreamLabel = `[stream_C${index}_with_C${index + 1}]`;
                 const transitionDuration = 0.5;
 
                 let transition: XFadeTransition | undefined;

@@ -1,11 +1,11 @@
 import type SoundtrackModel from "../../configurator/model/Soundtrack";
-import type { FFMpegLabel } from "../../types/types";
+import type { StreamLabel } from "../../types/types";
 
 export class Soundtrack {
     soundtrack?: SoundtrackModel;
     label: string;
 
-    constructor(label: FFMpegLabel, soundtrack?: SoundtrackModel) {
+    constructor(label: StreamLabel, soundtrack?: SoundtrackModel) {
         this.soundtrack = soundtrack;
         this.label = label;
     }

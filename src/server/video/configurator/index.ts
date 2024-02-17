@@ -7,8 +7,8 @@ import { getRandomEnumStartingWith, getRandomFromArray } from "../../../utils/ut
 import { getSizeFromResolution } from "../functions";
 import logger from "../logger";
 import { LoggerEmoji, LoggerState } from "../logger/enums";
-import { FitType, MotionEffect, OutputResolution, smoothTransitions, type OutputFormat, type XFadeTransition } from "../types/enums";
-import { type IDestination, type IEffect, type ISize, type ITransition } from "../types/interfaces";
+import { FitType, MotionEffect, OutputResolution, TitleSize, smoothTransitions, type OutputFormat, type XFadeTransition } from "../types/enums";
+import { type IDestination, type IEffect, type ISize, type ITitleAsset, type ITransition } from "../types/interfaces";
 import Shotstack from "./model";
 import type Clip from "./model/Clip";
 import type Edit from "./model/Edit";
@@ -18,6 +18,7 @@ import type Timeline from "./model/Timeline";
 import type Track from "./model/Track";
 import type { Asset } from "./model/assets/Asset";
 import type { ImageAsset } from "./model/assets/ImageAsset";
+import type { TitleAsset } from "./model/assets/TitleAsset";
 
 Big.DP = 2;
 
@@ -90,6 +91,19 @@ export class Configurator {
         return imageAsset;
     };
 
+    private createTitleAsset = (props: Omit<ITitleAsset, "type">): TitleAsset => {
+        const { text, style, size, position, color, background, offset } = props;
+        const titleAsset = new Shotstack.TitleAsset();
+        titleAsset.setText(text);
+        if (style) titleAsset.setStyle(style);
+        if (size) titleAsset.setSize(size);
+        if (position) titleAsset.setPosition(position);
+        if (color) titleAsset.setColor(color);
+        if (background) titleAsset.setBackground(background);
+        if (offset) titleAsset.setOffset(offset);
+        return titleAsset;
+    };
+
     private getDurationFromMood = ({ tempo }: IMood): Big => {
         const getSkipper = (): number => {
             const randomSkippers = [
@@ -150,7 +164,7 @@ export class Configurator {
     private createOutput = (props: { format?: OutputFormat; size: ISize; resolution: OutputResolution; fps: number }): Output => {
         let output = new Shotstack.Output();
         if (props.format) output = output.setFormat(props.format);
-        output.setResolution(props.resolution).setFps(props.fps).setDestination(this.props.destination);
+        output.setResolution(props.resolution).setFps(props.fps).setDestination(this.props.destination).setSize(props.size);
         return output;
     };
 
@@ -171,14 +185,34 @@ export class Configurator {
     public construct(): Edit {
         const mood = this.getMood();
         const clips = this.createImageClips(mood);
+        const resolution = this.props.config.resolution ?? OutputResolution.FULL_HD;
+        const size = getSizeFromResolution(resolution, this.props.config.orientation === OrientationType.PORTRAIT);
+        const clips2: Clip[] = [];
+
+        if (this.props.config.title) {
+            clips2.push(
+                this.createClip({
+                    asset: this.createTitleAsset({
+                        text: this.props.config.title,
+                        size: TitleSize.LARGE,
+                        color: "white",
+                        // background: "#00000000",
+                    }),
+                    start: Big(0),
+                    length: Big(5),
+                    fit: FitType.CROP,
+                }),
+            );
+        }
 
         const soundtrack = this.addSoundtrack(mood);
-        const tracks = [this.createTrack({ clips: clips.clips })];
+        const tracks = clips2.length
+            ? [this.createTrack({ clips: clips.clips }), this.createTrack({ clips: clips2 })]
+            : [this.createTrack({ clips: clips.clips })];
         const timeline = this.createTimeline({ tracks, soundtrack });
 
-        const resolution = this.props.config.resolution ?? OutputResolution.FULL_HD;
         const output = this.createOutput({
-            size: getSizeFromResolution(resolution, this.props.config.orientation === OrientationType.PORTRAIT),
+            size: size,
             resolution: resolution,
             fps: 30,
         });

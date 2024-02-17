@@ -1,6 +1,7 @@
 import type Output from "../../configurator/model/Output";
 import type TrackRenderer from "../../configurator/model/Track";
 import { getLabelName, overlay } from "../../functions";
+import type { StreamLabel } from "../../types/types";
 import Clips, { type IClipsOutput } from "./Clips";
 
 export interface ITrackProps {
@@ -38,7 +39,7 @@ class Track {
     }
 
     public overlayBy = (track: Track) => {
-        const outputStreamLabel = `[${getLabelName(this.clipsOutput.outputStreamLabel)}_overlaidBy_${getLabelName(track.clipsOutput.outputStreamLabel)}]`;
+        const outputStreamLabel: StreamLabel = `[${getLabelName(this.clipsOutput.outputStreamLabel)}_overlaidBy_${getLabelName(track.clipsOutput.outputStreamLabel)}]`;
         return overlay({
             mainStream: this.clipsOutput.outputStreamLabel,
             overlayStream: track.clipsOutput.outputStreamLabel,

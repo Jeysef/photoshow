@@ -26,6 +26,8 @@ export default function useUploader(props: IUploaderProps) {
                 controller.enqueue(JSON.parse(chunk) as IShowStreamData);
             } catch (err) {
                 controller.error(err);
+            } finally {
+                console.log("🚀 ~ file: uploader.ts:30 ~ transform ~ chunk:", chunk);
             }
         },
     });

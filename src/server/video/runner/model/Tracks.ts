@@ -1,6 +1,7 @@
 import Big from "big.js";
 import type Output from "../../configurator/model/Output";
 import type RendererTrack from "../../configurator/model/Track";
+import type { StreamLabel } from "../../types/types";
 import Track, { type ITrackOutput } from "./Track";
 
 export interface ITracksProps {
@@ -42,7 +43,7 @@ class Tracks {
      * czech: vkládám podklady tak že poslední je nahoře a všechny předchozí jsou postupně pod ním
      */
     private overlayTracks(tracks: Track[], tracksOutput: ITrackOutput[]) {
-        return tracks.reduceRight(
+        const value = tracks.reduceRight(
             (accumulator, track, currentIndex, tracks) => {
                 const currentTrack = tracksOutput[currentIndex];
                 if (!currentTrack) throw new Error("currentTrack is undefined");
@@ -66,22 +67,32 @@ class Tracks {
             },
             {
                 script: "",
-                outputStreamLabel: "",
+                outputStreamLabel: "" as StreamLabel,
             },
         );
+        if (!value.outputStreamLabel) throw new Error("outputStreamLabel is undefined. No tracks?");
+        if (value.script) {
+            value.script += ";";
+        }
+        return value;
     }
 
     public getOutput(): ITracksOutput {
         const tracks = this.getTracks(this.props);
         const tracksOutput = tracks.map((track) => track.getOutput());
         const overlay = this.overlayTracks(tracks, tracksOutput);
+        /**
+         * The duration of the final video is the duration of the longest track
+         */
+        const duration = tracksOutput.reduce((acc, curr) => (acc.gt(curr.duration) ? acc : curr.duration), Big(0));
+        console.log("🚀 ~ file: Tracks.ts:86 ~ Tracks ~ getOutput ~ duration:", duration);
         return {
             assets: tracksOutput.map((track) => track.assets).flat(),
             script: tracksOutput.reduce((acc, curr) => acc + curr.script + ";", "") + overlay.script,
             outputStreamLabel: overlay.outputStreamLabel,
             tracksCount: tracks.length,
             clipsCount: tracksOutput.reduce((acc, curr) => acc + curr.clipsCount, 0),
-            duration: tracksOutput.reduce((acc, curr) => (acc.gt(curr.duration) ? acc : curr.duration), Big(0)),
+            duration: duration,
         };
     }
 }

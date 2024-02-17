@@ -1,4 +1,5 @@
 import { OutputResolution, type XFadeTransition } from "../types/enums";
+import type { StreamLabel } from "../types/types";
 
 export const getScriptForXFade = (transitionType: XFadeTransition | undefined, duration: number, offset: number) => {
     return `xfade=transition=${transitionType}:duration=${duration}:offset=${offset}`;
@@ -44,16 +45,23 @@ export const getText = (text: string, font: string, size: number | string, color
 
 interface IOverlayProps {
     /** @example [stream_1] */
-    mainStream: string;
+    mainStream: StreamLabel;
     /** @example [stream_2] */
-    overlayStream: string;
+    overlayStream: StreamLabel;
     /** @example [stream_out] */
-    outputStreamLabel: string;
+    outputStreamLabel: StreamLabel;
 }
 /** It takes two inputs and has one output. The first input is the "main" video on which the second input is overlaid. */
 export const overlay = (props: IOverlayProps) => {
+    // !: There is a bug in the overlay script. It makes the output video shorter.
+    const index = crypto.randomUUID();
+    const mainPreOverlayLabel = `[main_pre_overlay_${index}]`;
+    const overlayPreMainLabel = `[overlay_pre_main_${index}]`;
+    const mainPreOverlayScript = `${props.mainStream}setpts=PTS-STARTPTS${mainPreOverlayLabel};`;
+    const overlayPreMainScript = `${props.overlayStream}setpts=PTS-STARTPTS${overlayPreMainLabel};`;
     return {
-        script: `${props.mainStream}${props.overlayStream}overlay=repeatlast=0${props.outputStreamLabel}`,
+        // script: `${props.mainStream}${props.overlayStream}overlay${props.outputStreamLabel}`,
+        script: `${mainPreOverlayScript}${overlayPreMainScript}${mainPreOverlayLabel}${overlayPreMainLabel}overlay${props.outputStreamLabel}`,
         outputStreamLabel: props.outputStreamLabel,
     };
 };

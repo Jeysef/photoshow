@@ -6,6 +6,7 @@ export type AssetInput = {
     name: string;
     fps?: number;
     duration: Big;
+    loop?: true | number;
 };
 
 export abstract class Asset {

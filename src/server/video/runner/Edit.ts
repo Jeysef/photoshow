@@ -27,6 +27,14 @@ class Edit {
         this.output = output;
         this.soundtrack = soundtrack;
         this.tracks = tracks;
+
+        // debug data
+        const data = {
+            clipLengths: this.duration().toNumber(),
+            clipsCount: this.tracks.clipsCount,
+        };
+
+        console.table(data);
     }
 
     getImageInputs = (): Input[] => {
@@ -34,9 +42,9 @@ class Edit {
             return {
                 name: asset.name,
                 format: asset.format,
-                loop: true,
+                loop: asset.loop,
                 fps: asset.fps ?? this.output.fps,
-            } satisfies Input;
+            } as Input;
         });
     };
 

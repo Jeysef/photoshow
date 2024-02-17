@@ -18,6 +18,7 @@ export class ImageAsset extends Asset {
             name: this.asset.src,
             duration: this.clip.duration,
             fps: this.clip.props.output.fps,
+            loop: true,
         };
     }
 }

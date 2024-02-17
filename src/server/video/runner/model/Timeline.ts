@@ -1,7 +1,7 @@
 import Big from "big.js";
 import type Edit from "../../configurator/model/Edit";
 import type Output from "../../configurator/model/Output";
-import type { FFMpegLabel } from "../../types/types";
+import type { StreamLabel } from "../../types/types";
 import { Soundtrack } from "./Soundtrack";
 import type { ITracksOutput } from "./Tracks";
 import Tracks from "./Tracks";
@@ -24,13 +24,13 @@ class Timeline {
         });
     };
 
-    private createSoundtrack = (label: FFMpegLabel): Soundtrack | undefined => {
+    private createSoundtrack = (label: StreamLabel): Soundtrack | undefined => {
         if (!this.props.timeline.soundtrack) return undefined;
         return new Soundtrack(label, this.props.timeline.soundtrack);
     };
 
     private formatOutputVideo = (prevOutputStreamLabel: string, script: string) => {
-        const outputStreamLabel = "[out]";
+        const outputStreamLabel: StreamLabel = "[out]";
         script += `${prevOutputStreamLabel}format=pix_fmts=yuv420p[out]`;
         return {
             script: script,
@@ -39,7 +39,7 @@ class Timeline {
     };
 
     private formatOutputAudio = (tracks: ITracksOutput) => {
-        const inLabel: FFMpegLabel = `[${tracks.clipsCount}:a]`;
+        const inLabel: StreamLabel = `[${tracks.clipsCount}:a]`;
         if (!this.props.timeline.soundtrack || (!this.props.timeline.soundtrack.fadeInDuration && !this.props.timeline.soundtrack.fadeOutDuration))
             return {
                 script: undefined,
@@ -49,7 +49,7 @@ class Timeline {
         /**
          * the audio label is the last label in the script and because input labels are 0 based, the label of the audio is the number of clips
          */
-        const outLabel: FFMpegLabel = "[outa]";
+        const outLabel: StreamLabel = "[outa]";
         const fadeInScript = fadeInDuration ? `afade=in:0:d=${fadeInDuration}` : "";
         const fadeOutScript = fadeOutDuration ? `afade=out:st=${tracks.duration.sub(fadeOutDuration).round(Big.DP).toNumber()}:d=${fadeOutDuration}` : "";
         return {

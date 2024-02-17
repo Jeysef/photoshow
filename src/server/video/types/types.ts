@@ -3,4 +3,4 @@ export interface UploadData {
     url: string;
 }
 
-export type FFMpegLabel = `[${string}]`;
+export type StreamLabel = `[${string}]`;

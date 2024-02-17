@@ -162,7 +162,6 @@ class Zoom {
 
     public zoomOut = (zoomSpeed: number, zoomPosition: MotionEffect, startingZoom = 1.2, zoomMin = 1.001) => {
         const speed = zoomSpeed;
-        const frames = this.props.clip.duration.times(this.fps).round(Big.DP).toNumber();
         if (startingZoom < 1) {
             throw new Error("startingZoom must be greater than 1");
         }
@@ -172,7 +171,7 @@ class Zoom {
 
         const position = this.scriptForZoomPosition(zoomPosition);
         const positionScript = position ? `:${position}` : "";
-        return `${this.scaleUp},zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.0015*${speed}))':d=${frames}${positionScript}:${this.fpsScript}:${this.scaleBack}`;
+        return `${this.scaleUp},zoompan=z='if(lte(zoom,1.0),${startingZoom},max(${zoomMin},zoom-0.0015*${speed}))':d=${this.frames}${positionScript}:${this.fpsScript}:${this.scaleBack}`;
     };
 
     private getScriptForZoomPosition() {

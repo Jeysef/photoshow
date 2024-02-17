@@ -14,6 +14,7 @@ import {
     type ITransition,
     type IVideoAsset,
 } from "../../types/interfaces";
+import type { StreamLabel } from "../../types/types";
 import { type Asset } from "./Asset";
 import { AudioAsset } from "./Assets/AudioAsset";
 import { HtmlAsset } from "./Assets/HtmlAsset";
@@ -44,7 +45,7 @@ export interface IClipChildrenProps extends Omit<IClipProps, "clip" | "index"> {
 class Clip implements IClipInterface, Omit<IClip, "asset"> {
     private _labelIndex = 0;
     public index: number;
-    public label: string;
+    public label: StreamLabel;
 
     public fit?: FitType;
     public scale?: number;
