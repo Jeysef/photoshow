@@ -176,7 +176,7 @@ export const TitleForm = () => {
             render={({ field }) => (
                 <FormItemWrapper label="Title" defaultOpen={true}>
                     <FormControl>
-                        <Input type="string" {...field} />
+                        <Input type="string" {...field} maxLength={60} />
                     </FormControl>
                 </FormItemWrapper>
             )}
