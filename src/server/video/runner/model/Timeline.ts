@@ -46,13 +46,15 @@ class Timeline {
             fadeOutStart: 5,
             fadeOutDuration: 1,
         });
-        return `format=yuv444p,${script},format=yuv420p`;
+        return `format=yuv444p,${script}`;
     };
 
     private formatOutputVideo = (prevOutputStreamLabel: string, script: string) => {
         const outputStreamLabel: StreamLabel = "[out]";
         const title = this.titleScript();
-        script += `${prevOutputStreamLabel}${title}${outputStreamLabel}`;
+        const outFormat = "format=yuv420p";
+        const titleScript = title ? `${title},${outFormat}` : outFormat;
+        script += `${prevOutputStreamLabel}${titleScript}${outputStreamLabel}`;
         return {
             script: script,
             outputStreamLabel: outputStreamLabel,
