@@ -72,7 +72,7 @@ export default function Home() {
                                     <Image
                                         src={slideshow}
                                         alt="Slideshow example"
-                                        className="aspect-[7/3] h-auto w-[37rem]  max-w-none flex-none rounded-2xl object-cover md:aspect-[7/5]"
+                                        className="aspect-[7/2] h-auto w-[37rem]  max-w-none flex-none rounded-2xl object-cover md:aspect-[7/5]"
                                     />
                                 </div>
                                 <div className="hidden sm:block sm:w-0 sm:flex-auto lg:w-auto lg:flex-none">
