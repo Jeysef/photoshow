@@ -11,7 +11,7 @@ import photo from "./photo.jpg";
 import photos from "./photos.jpg";
 import slideshow from "./slideshow.jpg";
 
-export default async function Home() {
+export default function Home() {
     return (
         <div className="relative h-full w-full">
             <div className="absolute inset-x-0 top-0">
