@@ -1,7 +1,3 @@
-import camera from "./camera.jpg";
-import photo from "./photo.jpg";
-import photos from "./photos.jpg";
-import slideshow from "./slideshow.jpg";
 import { buttonVariants } from "@/components/components/button";
 import Heading from "@/components/components/typography/heading";
 import Text from "@/components/components/typography/text";
@@ -10,6 +6,10 @@ import { siteConfig } from "@/config/site";
 import { ArrowDownCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import camera from "./camera.jpg";
+import photo from "./photo.jpg";
+import photos from "./photos.jpg";
+import slideshow from "./slideshow.jpg";
 
 export default async function Home() {
     return (
@@ -54,25 +54,33 @@ export default async function Home() {
                         </div>
                         <div className="flex flex-wrap items-start justify-end gap-6 sm:gap-8 lg:contents">
                             <div className="w-0 flex-auto lg:ml-auto lg:w-auto lg:flex-none lg:self-end">
-                                <Image src={photos} alt="Slideshow example" className="ml-4 aspect-[7/5] w-[37rem] max-w-none rounded-2xl object-cover" />
+                                <Image
+                                    src={photos}
+                                    alt="Slideshow example"
+                                    className="ml-4 aspect-[7/3] w-[37rem] max-w-none rounded-2xl object-cover md:aspect-[7/5]"
+                                />
                             </div>
                             <div className="contents lg:col-span-2 lg:col-end-2 lg:ml-auto lg:flex lg:w-[37rem] lg:items-start lg:justify-end lg:gap-x-8">
                                 <div className="order-first flex w-64 flex-none justify-end self-end lg:w-auto">
                                     <Image
                                         src={camera}
                                         alt="Slideshow example"
-                                        className=" aspect-[4/3] h-auto w-[24rem] max-w-none flex-none rounded-2xl object-cover"
+                                        className="aspect-[4/2] h-auto w-[24rem] max-w-none flex-none rounded-2xl object-cover md:aspect-[4/3]"
                                     />
                                 </div>
                                 <div className="flex w-96 flex-auto justify-end lg:w-auto lg:flex-none">
                                     <Image
                                         src={slideshow}
                                         alt="Slideshow example"
-                                        className="aspect-[7/5] h-auto  w-[37rem] max-w-none flex-none rounded-2xl object-cover"
+                                        className="aspect-[7/3] h-auto w-[37rem]  max-w-none flex-none rounded-2xl object-cover md:aspect-[7/5]"
                                     />
                                 </div>
                                 <div className="hidden sm:block sm:w-0 sm:flex-auto lg:w-auto lg:flex-none">
-                                    <Image src={photo} alt="Slideshow example" className=" aspect-[4/3] h-auto w-[24rem] max-w-none rounded-2xl object-cover" />
+                                    <Image
+                                        src={photo}
+                                        alt="Slideshow example"
+                                        className="aspect-[4/2] h-auto w-[24rem] max-w-none rounded-2xl object-cover md:aspect-[4/3]"
+                                    />
                                 </div>
                             </div>
                         </div>
