@@ -1,0 +1,34 @@
+.blob {
+    position: absolute;
+    inset: 50%;
+    translate: -50%;
+    width: 80%;
+    width: min(max(80%, 420px), 100%);
+    height: 40vh;
+    background: linear-gradient(40deg, hsla(197, 100%, 63%, 70) 0%, hsla(294, 100%, 55%, 70) 100%);
+    background: linear-gradient(40deg, hsl(173, 62%, 49%) 0%, hsla(197, 100%, 63%, 30) 100%);
+    border-radius: 40% / 40%;
+    margin-top: -190px;
+    margin-right: 50px;
+    filter: blur(100px);
+    opacity: 0.2;
+    mix-blend-mode: normal;
+
+    z-index: -1;
+
+    animation:
+        bloobing 10s ease-in-out infinite alternate,
+        width-smoosh 20s ease-in-out infinite alternate;
+}
+
+@keyframes bloobing {
+    to {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    }
+}
+
+@keyframes width-smoosh {
+    to {
+        width: min(max(70%, 400px), 100%);
+    }
+}

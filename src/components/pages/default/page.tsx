@@ -10,6 +10,7 @@ import camera from "./camera.jpg";
 import photo from "./photo.jpg";
 import photos from "./photos.jpg";
 import slideshow from "./slideshow.jpg";
+import styles from "./styles.module.css";
 
 export default function Home() {
     return (
@@ -18,6 +19,7 @@ export default function Home() {
                 <SiteHeader />
             </div>
             <div className="container relative h-full max-w-container">
+                <div className={styles.blob} />
                 <div className="flex h-full flex-col items-center justify-center">
                     <div className="text-center md:text-left">
                         <Heading variant={"h1"}>{siteConfig.name}</Heading>
