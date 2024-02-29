@@ -26,6 +26,9 @@ export default function AboutMe() {
                                 Whether it's coding, designing, or experimenting with new technologies, I love diving into the world of web development and
                                 bringing my ideas to life.
                             </Text>
+                            <Text className="mt-4" as="p" variant="smallText" >
+                                This project was created as part of my final thesis. Date of creation: 2024
+                            </Text>
                             <Text>
                                 <Link className={buttonVariants({ size: "sm" , variant: "link"})} href="/">
                                     <ArrowLeft className="pe-2"/>Back to Home

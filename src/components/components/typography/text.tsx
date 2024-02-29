@@ -8,6 +8,7 @@ type HTMLTypographyElement = HTMLParagraphElement;
 
 interface TextProps extends React.HTMLAttributes<HTMLTypographyElement>, VariantPropsTypographyWithoutVariant {
     variant?: AllowedVariants;
+    as?: string;
 }
 
 const Text = React.forwardRef<HTMLTypographyElement, TextProps>(({ variant = "p", ...props }, ref) => {
