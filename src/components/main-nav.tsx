@@ -19,7 +19,7 @@ export function MainNav() {
             <nav className="flex items-center space-x-6 text-sm font-medium">
                 <Link
                     href="/edit"
-                    className={cn("transition-colors hover:text-foreground/80", pathname === "/docs" ? "text-foreground" : "text-foreground/60")}
+                    className={cn("transition-colors hover:text-foreground/80", pathname?.startsWith("/edit") ? "text-foreground" : "text-foreground/60")}
                 >
                     Edit
                 </Link>
@@ -32,6 +32,12 @@ export function MainNav() {
                 >
                     Uplaoad audio
                 </Link> */}
+                <Link
+                    href="/about-me"
+                    className={cn("transition-colors hover:text-foreground/80", pathname?.startsWith("/about-me") ? "text-foreground" : "text-foreground/60")}
+                >
+                    About me
+                </Link>
                 {/* <Link href={siteConfig.links.github} className={cn("hidden text-foreground/60 transition-colors hover:text-foreground/80 lg:block")}>
                     GitHub
                 </Link> */}
