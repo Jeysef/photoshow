@@ -186,7 +186,7 @@ export class Configurator {
     public construct(): Edit {
         const mood = this.getMood();
         const clips = this.createImageClips(mood);
-        const resolution = this.props.config.resolution ?? OutputResolution.FULL_HD;
+        const resolution = this.props.config.resolution ?? OutputResolution.HD;
         const size = getSizeFromResolution(resolution, this.props.config.orientation === OrientationType.PORTRAIT);
 
         const soundtrack = this.addSoundtrack(mood);

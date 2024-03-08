@@ -9,7 +9,7 @@ import InputCardContent from "./Input-card-content";
 
 export const defaultValues: FormValues = {
     [FormFieldNames.ORIENTATION]: OrientationType.LANDSCAPE,
-    [FormFieldNames.RESOLUTION]: OutputResolution.FULL_HD,
+    [FormFieldNames.RESOLUTION]: OutputResolution.HD,
     [FormFieldNames.SOUNDTRACK]: "automatic",
     [FormFieldNames.FILES]: [],
 };
