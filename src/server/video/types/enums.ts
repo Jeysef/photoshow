@@ -20,7 +20,6 @@ export enum FilterType {
 }
 export enum FitType {
     CROP = "crop",
-    COVER = "cover",
     CONTAIN = "contain",
     NONE = "none",
 }
