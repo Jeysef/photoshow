@@ -10,8 +10,8 @@ import { OutputResolution } from "@/server/video/types/enums";
 import { api } from "@/trpc/react";
 import { OrientationType } from "@/types/types";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { ChevronsUpDown } from "lucide-react";
-import { Suspense, useContext, type FC, type PropsWithChildren } from "react";
+import { ChevronsUpDown, Play } from "lucide-react";
+import { Suspense, useContext, useRef, useState, type FC, type PropsWithChildren } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { type ControllerRenderProps } from "react-hook-form";
 import { FormFieldNames, type FormValues } from "../../pages/edit/formSchema";
@@ -39,11 +39,38 @@ const FormItemWrapper: FC<PropsWithChildren<IFormItemWrapperProps>> = ({ childre
 );
 
 const SoundtrackPreview = ({ audioName }: { audioName: string }) => {
+    const [clicked, setClicked] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
     return (
-        <div className="col-span-1">
-            <span className="flex h-8 flex-shrink-0 flex-grow basis-full overflow-hidden">
-                <video src={`/api/audio/get-audio?audioName=${audioName}`} controls={true} className="h-8" style={{ aspectRatio: "100" }} />
-            </span>
+        <div className="relative">
+            <div className="col-span-1">
+                <span className="flex h-8 flex-shrink-0 flex-grow basis-full overflow-hidden">
+                    <video
+                        src={`/api/audio/get-audio?audioName=${audioName}`}
+                        controls={true}
+                        className="h-8"
+                        style={{ aspectRatio: "100" }}
+                        preload="none"
+                        ref={videoRef}
+                    />
+                </span>
+            </div>
+            {!clicked && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background bg-opacity-50">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center space-x-1"
+                        onClick={() => {
+                            void videoRef.current?.play();
+                            setClicked(true);
+                        }}
+                    >
+                        <Play />
+                        <span>{"Listern"}</span>
+                    </Button>
+                </div>
+            )}
         </div>
     );
 };
